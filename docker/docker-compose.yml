@@ -1,0 +1,30 @@
+services:
+  mongodb: 
+    image: mongo:latest
+    container_name: mongodb
+    hostname: mongodb
+    volumes:
+      - mongodb-data:/data/db/
+      - mongodb-log:/var/log/mongodb/
+    env_file:
+      - ../.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - "27018:27017"
+    networks:
+      - mongodb_workshop_network
+
+volumes:
+  mongodb-data:
+    driver: local
+    name: mongo-data-workshop
+  mongodb-log:
+    driver: local
+    name: mongo-log-workshop
+
+networks:
+  mongodb_workshop_network:
+    driver: bridge
+    name: mongodb_workshop_network
