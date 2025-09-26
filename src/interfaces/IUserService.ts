@@ -22,18 +22,9 @@ export interface IUpdateUserData {
   isActive?: boolean;
 }
 
-export interface IPaginatedUsers {
-  users: any[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    pages: number;
-  };
-}
 
 export interface IUserService {
-  getAllUsersWithFilters(filters: IUserFilters): Promise<IPaginatedUsers>;
+
   findUserById(userId: string): Promise<any>;
   createNewUser(userData: ICreateUserData): Promise<any>;
   updateExistingUser(userId: string, updateData: IUpdateUserData): Promise<any>;

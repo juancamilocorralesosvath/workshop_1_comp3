@@ -8,34 +8,10 @@ import {
   IUserFilters,
   ICreateUserData,
   IUpdateUserData,
-  IPaginatedUsers
 } from '../interfaces/IUserService';
 
 export class UserService implements IUserService {
-  async getAllUsersWithFilters(filters: IUserFilters): Promise<IPaginatedUsers> {
-    const queryConditions = this.buildQueryConditions(filters);
-    const paginationOptions = this.buildPaginationOptions(filters);
-
-    const users = await User.find(queryConditions)
-      .populate('rol', 'name')
-      .select('-password')
-      .limit(paginationOptions.limit)
-      .skip(paginationOptions.skip)
-      .sort({ createdAt: -1 });
-
-    const totalUsers = await User.countDocuments(queryConditions);
-
-    return {
-      users,
-      pagination: {
-        page: paginationOptions.page,
-        limit: paginationOptions.limit,
-        total: totalUsers,
-        pages: Math.ceil(totalUsers / paginationOptions.limit)
-      }
-    };
-  }
-
+ 
   async findUserById(userId: string): Promise<any> {
     const user = await User.findOne({ id: userId })
       .populate('rol', 'name')
@@ -55,8 +31,9 @@ export class UserService implements IUserService {
     const uniqueUserId = generateUserId();
 
     const newUser = await this.buildAndSaveUser(userData, uniqueUserId, assignedRoles);
+    
 
-    return await this.getUserWithRolesById(newUser._id);
+    return await this.getUserWithRolesById(newUser.id);
   }
 
   async updateExistingUser(userId: string, updateData: IUpdateUserData): Promise<any> {
@@ -69,7 +46,7 @@ export class UserService implements IUserService {
     this.applyUpdatesToUser(existingUser, updateData);
     await existingUser.save();
 
-    return await this.getUserWithRolesById(existingUser._id);
+    return await this.getUserWithRolesById(existingUser.id);
   }
 
   async removeUser(userId: string): Promise<void> {
@@ -84,7 +61,7 @@ export class UserService implements IUserService {
     userToUpdate.rol = roleIds;
     await userToUpdate.save();
 
-    return await this.getUserWithRolesById(userToUpdate._id);
+    return await this.getUserWithRolesById(userToUpdate.id);
   }
 
   async toggleUserActiveStatus(userId: string): Promise<any> {
@@ -93,33 +70,10 @@ export class UserService implements IUserService {
     userToToggle.isActive = !userToToggle.isActive;
     await userToToggle.save();
 
-    return await this.getUserWithRolesById(userToToggle._id);
+    return await this.getUserWithRolesById(userToToggle.id);
   }
 
-  private buildQueryConditions(filters: IUserFilters) {
-    const queryConditions: any = {};
-
-    if (filters.search) {
-      queryConditions.$or = [
-        { fulll_name: { $regex: filters.search, $options: 'i' } },
-        { email: { $regex: filters.search, $options: 'i' } }
-      ];
-    }
-
-    if (filters.isActive !== undefined) {
-      queryConditions.isActive = filters.isActive;
-    }
-
-    return queryConditions;
-  }
-
-  private buildPaginationOptions(filters: IUserFilters) {
-    const page = filters.page || PAGINATION_CONFIG.DEFAULT_PAGE;
-    const limit = Math.min(filters.limit || PAGINATION_CONFIG.DEFAULT_LIMIT, PAGINATION_CONFIG.MAX_LIMIT);
-    const skip = (page - 1) * limit;
-
-    return { page, limit, skip };
-  }
+  
 
   private async validateEmailIsUnique(email: string): Promise<void> {
     const existingUser = await User.findOne({ email });

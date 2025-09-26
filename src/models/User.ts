@@ -5,7 +5,7 @@ export interface IUser extends Document {
   id: string;
   email: string;
   password: string;
-  fulll_name: string;
+  full_name: string;
   age: string;
   phone: string;
   rol: Types.ObjectId[];
@@ -25,14 +25,13 @@ const userSchema = new Schema<IUser>({
     required: true,
     unique: true,
     lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
   },
   password: {
     type: String,
     required: true,
     minlength: 6
   },
-  fulll_name: {
+  full_name: {
     type: String,
     required: true,
     trim: true
@@ -61,22 +60,7 @@ const userSchema = new Schema<IUser>({
   timestamps: true
 });
 
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-
-  try {
-    const salt = await bcrypt.genSalt(12);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error as Error);
-  }
-});
-
-userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password);
-};
-
+//Creamos indices para mejorar el rendimiento de las consultas
 userSchema.index({ email: 1 });
 userSchema.index({ id: 1 });
 
