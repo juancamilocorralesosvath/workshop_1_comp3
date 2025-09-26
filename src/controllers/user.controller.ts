@@ -3,13 +3,12 @@ import { ResponseHelper } from '../utils/response';
 import { SUCCESS_MESSAGES } from '../config/constants';
 import { userService } from '../services/userService';
 import { IUserService } from '../interfaces/IUserService';
-import { UserFiltersDTO, CreateUserDTO, UpdateUserDTO, UserIdDTO, AssignRolesDTO } from '../dto/UserDTO';
+import { CreateUserDTO, UpdateUserDTO, UserIdDTO, AssignRolesDTO } from '../dto/UserDTO';
 
 export class UserController {
   
   getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const filters = UserFiltersDTO.fromQuery(req.query);
       const paginatedUsers = await userService.findAll();
       return ResponseHelper.success(res, paginatedUsers, SUCCESS_MESSAGES.USERS_RETRIEVED);
     } catch (error) {
