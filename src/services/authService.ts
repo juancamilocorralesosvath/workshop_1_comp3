@@ -58,7 +58,7 @@ class AuthService implements IAuthService {
       id: userId,
       email: userData.email,
       password: userData.password,
-      fulll_name: userData.fulll_name,
+      full_name: userData.full_name,
       age: userData.age,
       phone: userData.phone,
       rol: [roleId]

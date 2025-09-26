@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyToken, JWTPayload } from '../utils/jwt';
+import { verifyToken } from '../utils/jwt';
+import { JWTRequest } from '../interfaces/Jwt-Request.interface';
 import { ResponseHelper } from '../utils/response';
 import { User } from '../models/User';
 import { Role } from '../models/Role';
@@ -7,7 +8,7 @@ import { Role } from '../models/Role';
 declare global {
   namespace Express {
     interface Request {
-      user?: JWTPayload;
+      user?: { userId: string; email: string; roles: string[] };
     }
   }
 }
@@ -29,7 +30,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     const decoded = verifyToken(token);
     req.user = decoded;
 
-    next();
+    next();f
   } catch (error) {
     return ResponseHelper.unauthorized(res, 'Invalid or expired token');
   }

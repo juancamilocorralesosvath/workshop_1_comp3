@@ -2,7 +2,7 @@ export class UserRegistrationDTO {
   constructor(
     public readonly email: string,
     public readonly password: string,
-    public readonly fulll_name: string,
+    public readonly full_name: string,
     public readonly age: string,
     public readonly phone: string
   ) {}
@@ -11,7 +11,7 @@ export class UserRegistrationDTO {
     return new UserRegistrationDTO(
       body.email,
       body.password,
-      body.fulll_name,
+      body.full_name,
       body.age,
       body.phone
     );
@@ -46,7 +46,7 @@ export class UserProfileUpdateDTO {
 
   static fromRequest(body: any): UserProfileUpdateDTO {
     return new UserProfileUpdateDTO(
-      body.fulll_name,
+      body.full_name,
       body.age,
       body.phone
     );

@@ -4,6 +4,7 @@ import { SUCCESS_MESSAGES } from '../config/constants';
 import { authService } from '../services/authService';
 import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO, UserProfileUpdateDTO, PasswordChangeDTO } from '../dto/AuthDTO';
 import { User } from '../models/User';
+import { verifyToken } from '../utils/jwt';
 
 
 
@@ -68,8 +69,7 @@ export class AuthController {
         return ResponseHelper.unauthorized(res, 'Refresh token is required');
       }
 
-      const jwt = require('jsonwebtoken');
-      const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production');
+      const decoded = verifyToken(refreshToken);
 
       const user = await User.findOne({ id: decoded.userId }).populate('rol', 'name');
       if (!user || !user.isActive) {

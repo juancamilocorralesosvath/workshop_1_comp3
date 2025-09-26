@@ -3,24 +3,19 @@ import { AuthController } from '../controllers/auth.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { validate, registerSchema, loginSchema } from '../middleware/validation.middleware';
 
-const router = Router();
+export const authRouter = Router();
 const authController = new AuthController();
 
+authRouter.post('/register', validate(registerSchema), authController.registerNewUser);
 
+authRouter.post('/login', validate(loginSchema), authController.authenticateUser);
 
+authRouter.post('/refresh', authController.refreshToken);
 
-router.post('/register', validate(registerSchema), authController.registerNewUser);
+authRouter.post('/logout', authenticate, authController.logout);
 
-router.post('/login', validate(loginSchema), authController.authenticateUser);
+authRouter.get('/profile', authenticate, authController.getProfile);
 
-router.post('/refresh', authController.refreshToken);
+authRouter.put('/profile', authenticate, authController.updateProfile);
 
-router.post('/logout', authenticate, authController.logout);
-
-router.get('/profile', authenticate, authController.getProfile);
-
-router.put('/profile', authenticate, authController.updateProfile);
-
-router.put('/change-password', authenticate, authController.changePassword);
-
-export default router;
+authRouter.put('/change-password', authenticate, authController.changePassword);

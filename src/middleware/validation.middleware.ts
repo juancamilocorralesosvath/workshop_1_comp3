@@ -3,22 +3,21 @@ import { z } from 'zod';
 import { ResponseHelper } from '../utils/response';
 
 export const registerSchema = z.object({
-  email: z.email('Invalid email format'),
+  email: z.string().email('Invalid email format'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   full_name: z.string().min(2, 'Full name must be at least 2 characters'),
-  age: z.number().int().min(1, 'Age is required').max(2, "Max Age 99"),
-  phone: z.string().min(10, 'Phone must be at least 10 characters').max(10),
-  
+  age: z.string().min(1, 'Age is required'),
+  phone: z.string().min(10, 'Phone must be at least 10 characters').max(15, 'Phone must be at most 15 characters'),
 });
 
 export const loginSchema = z.object({
-  email: z.email('Invalid email format'),
+  email: z.string().email('Invalid email format'),
   password: z.string().min(1, 'Password is required'),
 });
 
 export const updateUserSchema = z.object({
-  email: z.email('Invalid email format').optional(),
-  fulll_name: z.string().min(2, 'Full name must be at least 2 characters').optional(),
+  email: z.string().email('Invalid email format').optional(),
+  full_name: z.string().min(2, 'Full name must be at least 2 characters').optional(),
   age: z.string().min(1, 'Age is required').optional(),
   phone: z.string().min(10, 'Phone must be at least 10 characters').optional(),
   isActive: z.boolean().optional(),
