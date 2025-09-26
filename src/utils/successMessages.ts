@@ -14,7 +14,10 @@ export const SUCCESS_MESSAGES = {
   USER_CREATED: 'Usuario creado exitosamente',
   USER_UPDATED: 'Usuario actualizado exitosamente',
   USER_DELETED: 'Usuario eliminado exitosamente',
+  USER_RETRIEVED: 'Usuario obtenido exitosamente',
   USER_STATUS_UPDATED: 'Estado del usuario actualizado',
+  USER_ACTIVATED: 'Usuario activado exitosamente',
+  USER_DEACTIVATED: 'Usuario desactivado exitosamente',
   USERS_RETRIEVED: 'Usuarios obtenidos exitosamente',
 
   // Role management

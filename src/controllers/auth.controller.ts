@@ -14,7 +14,7 @@ export class AuthController {
   registerNewUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const registrationData = UserRegistrationDTO.fromRequest(req.body);
-    
+
       await authService.validateEmailNotExists(registrationData.email);
 
       const { user: createdUser, role: assignedRole } = await authService.createUserWithClientRole(registrationData);
@@ -30,7 +30,6 @@ export class AuthController {
       const authResponse = new AuthResponseDTO(userWithoutPassword, authTokens.accessToken, authTokens.refreshToken);
 
       return ResponseHelper.success(res, authResponse, SUCCESS_MESSAGES.USER_REGISTERED, 201);
-
     } catch (error) {
       next(error);
     }
@@ -55,7 +54,6 @@ export class AuthController {
       const authResponse = new AuthResponseDTO(userWithoutPassword, authTokens.accessToken, authTokens.refreshToken);
 
       return ResponseHelper.success(res, authResponse, SUCCESS_MESSAGES.LOGIN_SUCCESSFUL);
-
     } catch (error) {
       next(error);
     }
@@ -84,7 +82,6 @@ export class AuthController {
         token: authTokens.accessToken,
         refreshToken: authTokens.refreshToken
       }, SUCCESS_MESSAGES.TOKEN_REFRESHED);
-
     } catch (error) {
       return ResponseHelper.unauthorized(res, 'Invalid refresh token');
     }
@@ -106,7 +103,6 @@ export class AuthController {
 
       const user = await authService.getUserWithoutPassword(req.user.userId);
       return ResponseHelper.success(res, user, SUCCESS_MESSAGES.PROFILE_RETRIEVED);
-
     } catch (error) {
       next(error);
     }
@@ -134,7 +130,6 @@ export class AuthController {
       const updatedUser = await authService.getUserWithoutPassword(user.id);
 
       return ResponseHelper.success(res, updatedUser, SUCCESS_MESSAGES.PROFILE_UPDATED);
-
     } catch (error) {
       next(error);
     }
@@ -166,7 +161,6 @@ export class AuthController {
       await user.save();
 
       return ResponseHelper.success(res, null, SUCCESS_MESSAGES.PASSWORD_CHANGED);
-
     } catch (error) {
       next(error);
     }

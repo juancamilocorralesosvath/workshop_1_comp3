@@ -4,13 +4,14 @@ import { generateToken, generateRefreshToken } from '../utils/jwt';
 import { generateUserId, generateRoleId } from '../utils/generateId';
 import { ERROR_MESSAGES } from '../utils/errorMessages';
 import { IAuthService, IUserRegistration, IAuthTokens, IUserWithRole } from '../interfaces/IAuthService';
+import createError from 'http-errors';
 
 class AuthService implements IAuthService {
   
   async validateEmailNotExists(email: string): Promise<void> {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw new Error(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
+      throw createError.Conflict(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
     }
   }
 
@@ -65,7 +66,7 @@ class AuthService implements IAuthService {
       return clientRole;
     } catch (error) {
       console.error(' Error creating default role:', error);
-      throw new Error('Unable to create or find default client role');
+      throw createError.InternalServerError('Unable to create or find default client role');
     }
   }
 
@@ -87,21 +88,21 @@ class AuthService implements IAuthService {
   private async findUserByEmailWithRoles(email: string) {
     const userFound = await User.findOne({ email }).populate('rol', 'name');
     if (!userFound) {
-      throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
+      throw createError.Unauthorized(ERROR_MESSAGES.INVALID_CREDENTIALS);
     }
     return userFound;
   }
 
   private validateUserIsActive(user: any): void {
     if (!user.isActive) {
-      throw new Error(ERROR_MESSAGES.ACCOUNT_DEACTIVATED);
+      throw createError.Forbidden(ERROR_MESSAGES.ACCOUNT_DEACTIVATED);
     }
   }
 
   private async validatePassword(user: any, password: string): Promise<void> {
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-      throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
+      throw createError.Unauthorized(ERROR_MESSAGES.INVALID_CREDENTIALS);
     }
   }
 

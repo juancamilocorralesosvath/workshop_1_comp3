@@ -2,7 +2,8 @@ import { User } from '../models/User';
 import { Role } from '../models/Role';
 import { generateUserId } from '../utils/generateId';
 import { ERROR_MESSAGES } from '../utils/errorMessages';
-import { PAGINATION_CONFIG } from '../utils/config';
+import createError from 'http-errors';
+
 import {
   IUserService,
   IUserFilters,
@@ -18,7 +19,7 @@ class UserService implements IUserService {
       .select('-password');
 
     if (!user) {
-      throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
+      throw createError.NotFound(ERROR_MESSAGES.USER_NOT_FOUND);
     }
 
     return user;
@@ -88,7 +89,7 @@ class UserService implements IUserService {
   private async validateEmailIsUnique(email: string): Promise<void> {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw new Error(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
+      throw createError.Conflict(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
     }
   }
 
@@ -104,7 +105,7 @@ class UserService implements IUserService {
   private async getDefaultClientRole() {
     const clientRole = await Role.findOne({ name: 'cliente' });
     if (!clientRole) {
-      throw new Error(ERROR_MESSAGES.DEFAULT_ROLE_NOT_FOUND);
+      throw createError.InternalServerError(ERROR_MESSAGES.DEFAULT_ROLE_NOT_FOUND);
     }
     return [clientRole._id];
   }
@@ -112,7 +113,7 @@ class UserService implements IUserService {
   private async validateRolesExist(roleIds: string[]): Promise<void> {
     const foundRoles = await Role.find({ _id: { $in: roleIds } });
     if (foundRoles.length !== roleIds.length) {
-      throw new Error(ERROR_MESSAGES.ROLE_NOT_FOUND);
+      throw createError.NotFound(ERROR_MESSAGES.ROLE_NOT_FOUND);
     }
   }
 
@@ -134,7 +135,7 @@ class UserService implements IUserService {
   private async findUserEntityById(userId: string) {
     const user = await User.findOne({ id: userId });
     if (!user) {
-      throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
+      throw createError.NotFound(ERROR_MESSAGES.USER_NOT_FOUND);
     }
     return user;
   }
