@@ -2,7 +2,7 @@ export class UserRegistrationDTO {
   constructor(
     public readonly email: string,
     public readonly password: string,
-    public readonly fullName: string,
+    public readonly fulll_name: string,
     public readonly age: string,
     public readonly phone: string
   ) {}

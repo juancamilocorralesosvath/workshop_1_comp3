@@ -27,4 +27,6 @@ export interface IAuthService {
   validateUserCredentials(email: string, password: string): Promise<any>;
   generateAuthTokens(userId: string, email: string, roles: string[]): IAuthTokens;
   getUserWithoutPassword(userId: string): Promise<any>;
+  extractRoleNames(user: any): string[];
+  removePasswordFromUserObject(user: any): any;
 }
