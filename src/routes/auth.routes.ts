@@ -6,6 +6,9 @@ import { validate, registerSchema, loginSchema } from '../middleware/validation.
 const router = Router();
 const authController = new AuthController();
 
+
+
+
 router.post('/register', validate(registerSchema), authController.registerNewUser);
 
 router.post('/login', validate(loginSchema), authController.authenticateUser);

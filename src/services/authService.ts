@@ -5,7 +5,10 @@ import { generateUserId } from '../utils/generateId';
 import { ERROR_MESSAGES } from '../config/constants';
 import { IAuthService, IUserRegistration, IAuthTokens, IUserWithRole } from '../interfaces/IAuthService';
 
-export class AuthService implements IAuthService {
+class AuthService implements IAuthService {
+  static validateEmailNotExists(email: string) {
+    throw new Error('Method not implemented.');
+  }
   async validateEmailNotExists(email: string): Promise<void> {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -103,3 +106,5 @@ export class AuthService implements IAuthService {
     return userWithoutPassword;
   }
 }
+
+export const authService = new AuthService;

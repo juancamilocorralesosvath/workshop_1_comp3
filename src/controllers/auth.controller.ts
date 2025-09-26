@@ -1,29 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
 import { ResponseHelper } from '../utils/response';
 import { SUCCESS_MESSAGES } from '../config/constants';
-import { AuthService } from '../services/authService';
+import { authService } from '../services/authService';
 import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO, UserProfileUpdateDTO, PasswordChangeDTO } from '../dto/AuthDTO';
 import { IAuthService } from '../interfaces/IAuthService';
 import { User } from '../models/User';
 
-export class AuthController {
-  private readonly authService: IAuthService;
 
-  constructor(authService: IAuthService = new AuthService()) {
-    this.authService = authService;
-  }
+
+export class AuthController {
+  
 
   registerNewUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const registrationData = UserRegistrationDTO.fromRequest(req.body);
+    
+      await authService.validateEmailNotExists(registrationData.email);
 
-      await this.authService.validateEmailNotExists(registrationData.email);
+      const { user: createdUser, role: assignedRole } = await authService.createUserWithClientRole(registrationData);
 
-      const { user: createdUser, role: assignedRole } = await this.authService.createUserWithClientRole(registrationData);
+      const userWithoutPassword = await authService.getUserWithoutPassword(createdUser._id);
 
-      const userWithoutPassword = await this.authService.getUserWithoutPassword(createdUser._id);
-
-      const authTokens = this.authService.generateAuthTokens(
+      const authTokens = authService.generateAuthTokens(
         createdUser.id,
         createdUser.email,
         [assignedRole.name]
@@ -42,17 +40,17 @@ export class AuthController {
     try {
       const credentials = UserCredentialsDTO.fromRequest(req.body);
 
-      const authenticatedUser = await this.authService.validateUserCredentials(credentials.email, credentials.password);
+      const authenticatedUser = await authService.validateUserCredentials(credentials.email, credentials.password);
 
-      const roleNames = this.authService.extractRoleNames(authenticatedUser);
+      const roleNames = authService.extractRoleNames(authenticatedUser);
 
-      const authTokens = this.authService.generateAuthTokens(
+      const authTokens = authService.generateAuthTokens(
         authenticatedUser.id,
         authenticatedUser.email,
         roleNames
       );
 
-      const userWithoutPassword = this.authService.removePasswordFromUserObject(authenticatedUser);
+      const userWithoutPassword = authService.removePasswordFromUserObject(authenticatedUser);
 
       const authResponse = new AuthResponseDTO(userWithoutPassword, authTokens.accessToken, authTokens.refreshToken);
 
@@ -79,9 +77,9 @@ export class AuthController {
         return ResponseHelper.unauthorized(res, 'User not found or deactivated');
       }
 
-      const roleNames = this.authService.extractRoleNames(user);
+      const roleNames = authService.extractRoleNames(user);
 
-      const authTokens = this.authService.generateAuthTokens(user.id, user.email, roleNames);
+      const authTokens = authService.generateAuthTokens(user.id, user.email, roleNames);
 
       return ResponseHelper.success(res, {
         token: authTokens.accessToken,
@@ -107,7 +105,7 @@ export class AuthController {
         return ResponseHelper.unauthorized(res, 'Authentication required');
       }
 
-      const user = await this.authService.getUserWithoutPassword(req.user.userId);
+      const user = await authService.getUserWithoutPassword(req.user.userId);
       return ResponseHelper.success(res, user, SUCCESS_MESSAGES.PROFILE_RETRIEVED);
 
     } catch (error) {
@@ -128,13 +126,13 @@ export class AuthController {
         return ResponseHelper.notFound(res, 'User not found');
       }
 
-      if (profileUpdateData.fullName) user.fulll_name = profileUpdateData.fullName;
+      if (profileUpdateData.fullName) user.full_name = profileUpdateData.fullName;
       if (profileUpdateData.age) user.age = profileUpdateData.age;
       if (profileUpdateData.phone) user.phone = profileUpdateData.phone;
 
       await user.save();
 
-      const updatedUser = await this.authService.getUserWithoutPassword(user._id);
+      const updatedUser = await authService.getUserWithoutPassword(user.id);
 
       return ResponseHelper.success(res, updatedUser, SUCCESS_MESSAGES.PROFILE_UPDATED);
 
