@@ -64,6 +64,7 @@ class UserService implements IUserService {
   }
 
   async assignRolesToUser(userId: string, roleIds: string[]): Promise<any> {
+    
     const userToUpdate = await this.findUserEntityById(userId);
     await this.validateRolesExist(roleIds);
 
@@ -120,7 +121,7 @@ class UserService implements IUserService {
       id: userId,
       email: userData.email,
       password: userData.password,
-      fulll_name: userData.fulll_name,
+      fulll_name: userData.full_name,
       age: userData.age,
       phone: userData.phone,
       rol: roleIds

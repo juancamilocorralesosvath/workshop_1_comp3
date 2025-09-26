@@ -8,7 +8,7 @@ export interface IUser extends Document {
   full_name: string;
   age: string;
   phone: string;
-  rol: Types.ObjectId[];
+  rol: string[];
   isActive: boolean;
   lastLogin?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
