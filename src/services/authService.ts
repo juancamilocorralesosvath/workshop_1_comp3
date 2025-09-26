@@ -17,7 +17,7 @@ export class AuthService implements IAuthService {
     const defaultClientRole = await this.findDefaultClientRole();
     const uniqueUserId = generateUserId();
 
-    const newUser = await this.buildAndSaveUser(userData, uniqueUserId, defaultClientRole._id);
+    const newUser = await this.buildAndSaveUser(userData, uniqueUserId, defaultClientRole.id);
 
     return { user: newUser, role: defaultClientRole };
   }
