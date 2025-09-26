@@ -8,7 +8,7 @@ export interface IUserFilters {
 export interface ICreateUserData {
   email: string;
   password: string;
-  fulll_name: string;
+  full_name: string;
   age: string;
   phone: string;
   roleIds?: string[];

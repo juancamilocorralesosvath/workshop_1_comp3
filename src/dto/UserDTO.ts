@@ -20,7 +20,7 @@ export class CreateUserDTO {
   constructor(
     public readonly email: string,
     public readonly password: string,
-    public readonly fullName: string,
+    public readonly full_name: string,
     public readonly age: string,
     public readonly phone: string,
     public readonly roleIds?: string[]
