@@ -1,0 +1,220 @@
+{
+  "roles": [
+    {
+      "name": "admin",
+      "description": "Administrador del sistema con acceso completo",
+      "permissions": [
+        "users:create",
+        "users:read",
+        "users:update",
+        "users:delete",
+        "users:toggle-status",
+        "users:assign-roles",
+        "roles:create",
+        "roles:read",
+        "roles:update",
+        "roles:delete",
+        "permissions:create",
+        "permissions:read",
+        "permissions:update",
+        "permissions:delete",
+        "profile:read",
+        "profile:update",
+        "auth:login",
+        "auth:logout",
+        "auth:refresh",
+        "auth:change-password"
+      ]
+    },
+    {
+      "name": "coach",
+      "description": "Entrenador del gimnasio con acceso limitado",
+      "permissions": [
+        "profile:read",
+        "profile:update",
+        "auth:login",
+        "auth:logout",
+        "auth:refresh",
+        "auth:change-password"
+      ]
+    },
+    {
+      "name": "cliente",
+      "description": "Cliente del gimnasio con acceso solo a su perfil",
+      "permissions": [
+        "profile:read",
+        "profile:update",
+        "auth:login",
+        "auth:logout",
+        "auth:refresh",
+        "auth:change-password"
+      ]
+    },
+    {
+      "name": "recepcionista",
+      "description": "Recepcionista con acceso a consultar y crear usuarios",
+      "permissions": [
+        "users:create",
+        "users:read",
+        "users:update",
+        "profile:read",
+        "profile:update",
+        "auth:login",
+        "auth:logout",
+        "auth:refresh",
+        "auth:change-password"
+      ]
+    }
+  ],
+  "permissions": [
+    {
+      "name": "users:create",
+      "description": "Crear nuevos usuarios"
+    },
+    {
+      "name": "users:read",
+      "description": "Consultar información de usuarios"
+    },
+    {
+      "name": "users:update",
+      "description": "Actualizar información de usuarios"
+    },
+    {
+      "name": "users:delete",
+      "description": "Eliminar usuarios del sistema"
+    },
+    {
+      "name": "users:toggle-status",
+      "description": "Activar/desactivar usuarios"
+    },
+    {
+      "name": "users:assign-roles",
+      "description": "Asignar roles a usuarios"
+    },
+    {
+      "name": "roles:create",
+      "description": "Crear nuevos roles"
+    },
+    {
+      "name": "roles:read",
+      "description": "Consultar roles existentes"
+    },
+    {
+      "name": "roles:update",
+      "description": "Actualizar roles existentes"
+    },
+    {
+      "name": "roles:delete",
+      "description": "Eliminar roles del sistema"
+    },
+    {
+      "name": "permissions:create",
+      "description": "Crear nuevos permisos"
+    },
+    {
+      "name": "permissions:read",
+      "description": "Consultar permisos existentes"
+    },
+    {
+      "name": "permissions:update",
+      "description": "Actualizar permisos existentes"
+    },
+    {
+      "name": "permissions:delete",
+      "description": "Eliminar permisos del sistema"
+    },
+    {
+      "name": "profile:read",
+      "description": "Consultar perfil propio"
+    },
+    {
+      "name": "profile:update",
+      "description": "Actualizar perfil propio"
+    },
+    {
+      "name": "auth:login",
+      "description": "Iniciar sesión en el sistema"
+    },
+    {
+      "name": "auth:logout",
+      "description": "Cerrar sesión del sistema"
+    },
+    {
+      "name": "auth:refresh",
+      "description": "Refrescar token de autenticación"
+    },
+    {
+      "name": "auth:change-password",
+      "description": "Cambiar contraseña propia"
+    }
+  ],
+  "testScenarios": {
+    "admin": {
+      "canAccess": [
+        "GET /user/",
+        "GET /user/:id",
+        "POST /user/",
+        "PUT /user/:id",
+        "DELETE /user/:id",
+        "PATCH /user/:id/toggle-status",
+        "POST /user/assign-roles",
+        "GET /auth/profile",
+        "PUT /auth/profile",
+        "PUT /auth/change-password",
+        "POST /auth/logout"
+      ],
+      "shouldFail": []
+    },
+    "coach": {
+      "canAccess": [
+        "GET /auth/profile",
+        "PUT /auth/profile",
+        "PUT /auth/change-password",
+        "POST /auth/logout"
+      ],
+      "shouldFail": [
+        "GET /user/",
+        "GET /user/:id",
+        "POST /user/",
+        "PUT /user/:id",
+        "DELETE /user/:id",
+        "PATCH /user/:id/toggle-status",
+        "POST /user/assign-roles"
+      ]
+    },
+    "cliente": {
+      "canAccess": [
+        "GET /auth/profile",
+        "PUT /auth/profile",
+        "PUT /auth/change-password",
+        "POST /auth/logout"
+      ],
+      "shouldFail": [
+        "GET /user/",
+        "GET /user/:id",
+        "POST /user/",
+        "PUT /user/:id",
+        "DELETE /user/:id",
+        "PATCH /user/:id/toggle-status",
+        "POST /user/assign-roles"
+      ]
+    },
+    "recepcionista": {
+      "canAccess": [
+        "GET /user/",
+        "GET /user/:id",
+        "POST /user/",
+        "PUT /user/:id",
+        "GET /auth/profile",
+        "PUT /auth/profile",
+        "PUT /auth/change-password",
+        "POST /auth/logout"
+      ],
+      "shouldFail": [
+        "DELETE /user/:id",
+        "PATCH /user/:id/toggle-status",
+        "POST /user/assign-roles"
+      ]
+    }
+  }
+}
