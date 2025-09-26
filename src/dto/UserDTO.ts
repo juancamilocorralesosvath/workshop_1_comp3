@@ -1,20 +1,3 @@
-export class UserFiltersDTO {
-  constructor(
-    public readonly search?: string,
-    public readonly isActive?: boolean,
-    public readonly page?: number,
-    public readonly limit?: number
-  ) {}
-
-  static fromQuery(query: any): UserFiltersDTO {
-    return new UserFiltersDTO(
-      query.search,
-      query.isActive === 'true' ? true : query.isActive === 'false' ? false : undefined,
-      parseInt(query.page) || undefined,
-      parseInt(query.limit) || undefined
-    );
-  }
-}
 
 export class CreateUserDTO {
   constructor(
