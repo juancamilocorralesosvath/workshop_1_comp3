@@ -1,8 +1,8 @@
 import { User } from '../models/User';
 import { Role } from '../models/Role';
 import { generateUserId } from '../utils/generateId';
-import { ERROR_MESSAGES } from '../config/constants';
-import { PAGINATION_CONFIG } from '../config/constants';
+import { ERROR_MESSAGES } from '../utils/errorMessages';
+import { PAGINATION_CONFIG } from '../utils/config';
 import {
   IUserService,
   IUserFilters,

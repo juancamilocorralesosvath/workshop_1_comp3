@@ -2,7 +2,7 @@ import { User } from '../models/User';
 import { Role } from '../models/Role';
 import { generateToken, generateRefreshToken } from '../utils/jwt';
 import { generateUserId, generateRoleId } from '../utils/generateId';
-import { ERROR_MESSAGES } from '../config/constants';
+import { ERROR_MESSAGES } from '../utils/errorMessages';
 import { IAuthService, IUserRegistration, IAuthTokens, IUserWithRole } from '../interfaces/IAuthService';
 
 class AuthService implements IAuthService {

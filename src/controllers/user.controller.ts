@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ResponseHelper } from '../utils/response';
-import { SUCCESS_MESSAGES } from '../config/constants';
+import { SUCCESS_MESSAGES } from '../utils/successMessages';
 import { userService } from '../services/userService';
 import { IUserService } from '../interfaces/IUserService';
 import { CreateUserDTO, UpdateUserDTO, UserIdDTO, AssignRolesDTO } from '../dto/UserDTO';

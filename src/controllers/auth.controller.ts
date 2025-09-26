@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ResponseHelper } from '../utils/response';
-import { SUCCESS_MESSAGES } from '../config/constants';
+import { SUCCESS_MESSAGES } from '../utils/successMessages';
 import { authService } from '../services/authService';
 import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO, UserProfileUpdateDTO, PasswordChangeDTO } from '../dto/AuthDTO';
 import { User } from '../models/User';
