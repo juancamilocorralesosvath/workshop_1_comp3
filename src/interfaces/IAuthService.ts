@@ -24,7 +24,7 @@ export interface IUserWithRole {
 export interface IAuthService {
   validateEmailNotExists(email: string): Promise<void>;
   createUserWithClientRole(userData: IUserRegistration): Promise<IUserWithRole>;
-  validateUserCredentials(email: string, password: string): Promise<any>;
+  validateUserCredentials(email: string, password: string): Promise<boolean>;
   generateAuthTokens(userId: string, email: string, roles: string[]): IAuthTokens;
   getUserWithoutPassword(userId: string): Promise<any>;
   extractRoleNames(user: any): string[];

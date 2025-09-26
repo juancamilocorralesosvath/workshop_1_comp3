@@ -68,7 +68,7 @@ const roles = [
 const defaultAdmin = {
   email: 'admin@gym.com',
   password: 'admin123',
-  fulll_name: 'Administrador del Sistema',
+  full_name: 'Administrador del Sistema',
   age: '30',
   phone: '+573001234567'
 };
@@ -129,7 +129,7 @@ export const seedInitialData = async () => {
         id: generateUserId(),
         email: defaultAdmin.email,
         password: defaultAdmin.password,
-        fulll_name: defaultAdmin.fulll_name,
+        full_name: defaultAdmin.full_name,
         age: defaultAdmin.age,
         phone: defaultAdmin.phone,
         rol: [adminRole._id]

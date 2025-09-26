@@ -3,7 +3,6 @@ import { ResponseHelper } from '../utils/response';
 import { SUCCESS_MESSAGES } from '../config/constants';
 import { authService } from '../services/authService';
 import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO, UserProfileUpdateDTO, PasswordChangeDTO } from '../dto/AuthDTO';
-import { IAuthService } from '../interfaces/IAuthService';
 import { User } from '../models/User';
 
 
