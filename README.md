@@ -1,23 +1,79 @@
-# NodeJS workshop
+# 🏋️‍♂️ Gym Management System - User Module
 
+## 👥 Equipo de Desarrollo
 * Luis Manuel Rojas Correa
 * Santiago Angel Ordoñez
 * Cristian
 * Juan Camilo Corrales Osvath
 
-## como correr la imagen de docker para usar mongo
+## 📋 Descripción del Proyecto
 
-1. crear el archivo .env en la raiz del proyecto
+Sistema de gestión de gimnasio desarrollado en Express.js con TypeScript. Este módulo maneja toda la funcionalidad relacionada con usuarios, autenticación, roles y permisos.
+
+## 🏗️ Arquitectura del Sistema
+
+### Estructura de Carpetas
+```
+src/
+├── controllers/        # 🎮 Lógica de negocio y manejo de endpoints
+├── middleware/         # 🛡️ Funciones intermedias (auth, validación, errores)
+├── models/            # 📊 Esquemas de base de datos (Mongoose)
+├── routes/            # 🛣️ Definición de rutas y endpoints
+├── utils/             # 🔧 Funciones utilitarias reutilizables
+├── seeders/           # 🌱 Datos iniciales para la base de datos
+└── types/             # 📝 Definiciones de tipos TypeScript
+```
+
+### Patrón de Arquitectura
+- **MVC (Model-View-Controller)**: Separación clara de responsabilidades
+- **Middleware Pattern**: Para autenticación, validación y manejo de errores
+- **Repository Pattern**: Abstracción de acceso a datos con Mongoose
+
+## 🚀 Instalación y Configuración
+
+### Prerequisitos
+- Node.js (v18+)
+- MongoDB (via Docker)
+- npm o bun
+
+### 1. Instalar Dependencias
+```bash
+npm install
+```
+
+### 2. Configurar Variables de Entorno
+Copiar `.env.example` a `.env` y configurar:
+```env
+MONGO_URI=mongodb://admin:password@localhost:27018/workshop
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
+JWT_EXPIRES_IN=7d
+PORT=3000
+```
+
+### 3. Iniciar MongoDB con Docker
+```bash
+docker compose up -d
+```
+
+### 4. Ejecutar la Aplicación
+```bash
+npm start
+```
+
+## 🔧 Configuración de MongoDB
+
+### Como correr la imagen de docker para usar mongo
+
+1. Crear el archivo .env en la raiz del proyecto
 
 ```bash
 cd workshop_1_comp3
-
 touch .env
 ```
 
-2. meter en el archivo .env las variables de entorno necesarias (estan en el whatsapp)
+2. Meter en el archivo .env las variables de entorno necesarias (usar .env.example como referencia)
 
-3. una vez hecho eso, abrir docker desktop en sus pcs y correr el comando
+3. Una vez hecho eso, abrir docker desktop en sus pcs y correr el comando
 
 ```bash
 docker compose up -d
@@ -25,20 +81,233 @@ docker compose up -d
 
 (en la raiz del proyecto)
 
-4. abrir mongo compass
-5. seleccionar crear una nueva conexion
-6. en la uri, colocar
-
+4. Abrir mongo compass
+5. Seleccionar crear una nueva conexion
+6. En la uri, colocar
 
 ```bash
 mongodb://localhost:27018
 ```
-7. seleccionar advanced connection options
 
-8. seleccionar `Authentication`
+7. Seleccionar advanced connection options
+8. Seleccionar `Authentication`
+9. En username y password colocar la info del .env
+10. Save & connect.
+11. ¡Listo para usar!
 
-9. en username y password colocar la info del .env
+## 👥 Sistema de Roles y Permisos
 
-10. save & connect.
+### Roles Predefinidos
 
-11. estamps readys
+| Rol | Descripción | Permisos |
+|-----|-------------|----------|
+| **admin** | Administrador del sistema | Todos los permisos |
+| **recepcionista** | Personal de recepción | Gestión de usuarios, suscripciones, asistencias |
+| **coach** | Entrenador | Lectura de usuarios, gestión de asistencias |
+| **cliente** | Usuario final | Lectura de sus propios datos |
+
+### Permisos Disponibles
+- `user.*` - Gestión de usuarios
+- `role.*` - Gestión de roles
+- `permission.*` - Gestión de permisos
+- `attendance.*` - Gestión de asistencias
+- `membership.*` - Gestión de membresías
+- `subscription.*` - Gestión de suscripciones
+
+## 🔐 Autenticación y Seguridad
+
+### JWT (JSON Web Tokens)
+- **Expiración**: 7 días (configurable)
+- **Refresh Tokens**: 30 días
+- **Algoritmo**: HS256
+
+### Seguridad de Contraseñas
+- **Encriptación**: bcrypt con salt de 12 rounds
+- **Validación**: Mínimo 6 caracteres
+
+### Protección de Rutas
+```typescript
+// Ejemplo de protección por rol
+router.get('/users',
+  authenticate,                    // ✅ Usuario autenticado
+  authorize(['admin', 'recepcionista']), // ✅ Rol autorizado
+  UserController.getAllUsers
+);
+```
+
+## 📡 API Endpoints
+
+### 🔑 Autenticación (`/api/auth`)
+
+| Método | Endpoint | Descripción | Acceso |
+|--------|----------|-------------|---------|
+| POST | `/register` | Registro de usuario | Público |
+| POST | `/login` | Inicio de sesión | Público |
+| POST | `/refresh` | Renovar token | Público |
+| GET | `/profile` | Obtener perfil | Autenticado |
+| PUT | `/profile` | Actualizar perfil | Autenticado |
+| PUT | `/change-password` | Cambiar contraseña | Autenticado |
+
+### 👤 Gestión de Usuarios (`/api/users`)
+
+| Método | Endpoint | Descripción | Acceso |
+|--------|----------|-------------|---------|
+| GET | `/` | Listar usuarios | Admin/Recepcionista |
+| GET | `/:id` | Obtener usuario | Admin/Recepcionista |
+| POST | `/` | Crear usuario | Admin/Recepcionista |
+| PUT | `/:id` | Actualizar usuario | Admin/Recepcionista |
+| DELETE | `/:id` | Eliminar usuario | Admin |
+| POST | `/assign-roles` | Asignar roles | Admin |
+
+## 💾 Modelos de Datos
+
+### Usuario (User)
+```typescript
+interface IUser {
+  id: string;           // ID único generado
+  email: string;        // Email único (validado)
+  password: string;     // Contraseña encriptada
+  fulll_name: string;   // Nombre completo
+  age: string;          // Edad
+  phone: string;        // Teléfono
+  rol: ObjectId[];      // Referencias a roles
+  isActive: boolean;    // Estado del usuario
+  lastLogin?: Date;     // Último inicio de sesión
+}
+```
+
+### Rol (Role)
+```typescript
+interface IRole {
+  id: string;              // ID único generado
+  name: string;            // Nombre del rol (único)
+  permissions: ObjectId[]; // Referencias a permisos
+}
+```
+
+### Permiso (Permission)
+```typescript
+interface IPermission {
+  id: string;   // ID único generado
+  name: string; // Nombre del permiso (único)
+}
+```
+
+## 🧪 Ejemplos de Uso
+
+### Registro de Usuario
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "usuario@example.com",
+    "password": "password123",
+    "fulll_name": "Juan Pérez",
+    "age": "25",
+    "phone": "+573001234567"
+  }'
+```
+
+### Respuesta Exitosa
+```json
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": {
+      "id": "user_a1b2c3d4e5f6",
+      "email": "usuario@example.com",
+      "fulll_name": "Juan Pérez",
+      "rol": [{"name": "cliente"}]
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+## 🔧 Configuración Inicial
+
+### Usuario Administrador por Defecto
+```
+Email: admin@gym.com
+Password: admin123
+```
+
+⚠️ **IMPORTANTE**: Cambiar estas credenciales en producción.
+
+## 🛠️ Herramientas de Desarrollo
+
+### Scripts Disponibles
+```json
+{
+  "start": "bun --watch src/index.ts"
+}
+```
+
+### Dependencias Principales
+- **express**: Framework web
+- **mongoose**: ODM para MongoDB
+- **jsonwebtoken**: Manejo de JWT
+- **bcryptjs**: Encriptación de contraseñas
+- **zod**: Validación de esquemas
+- **cors**: Manejo de CORS
+- **compression**: Compresión de respuestas
+
+## 📊 Monitoreo y Logs
+
+### Health Check
+```bash
+GET http://localhost:3000/health
+```
+
+### Logs del Sistema
+- ✅ Conexión a MongoDB
+- ✅ Inicio del servidor
+- ✅ Creación de datos iniciales
+- ❌ Errores de autenticación
+- ❌ Errores de validación
+
+## 🚨 Manejo de Errores
+
+### Códigos de Estado HTTP
+- `200` - Éxito
+- `201` - Creado
+- `400` - Error de validación
+- `401` - No autorizado
+- `403` - Prohibido
+- `404` - No encontrado
+- `409` - Conflicto (recurso existe)
+- `500` - Error interno del servidor
+
+### Formato de Respuesta de Error
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "error": "Detailed error message",
+  "errors": ["validation error 1", "validation error 2"]
+}
+```
+
+## 🤝 Contribución
+
+### Convenciones de Código
+1. **Nombres descriptivos**: Funciones y variables en español/inglés claro
+2. **Comentarios JSDoc**: Documentar funciones públicas
+3. **Validación estricta**: Usar Zod para validar entradas
+4. **Manejo de errores**: Usar try-catch y middleware de errores
+5. **Tipado fuerte**: Aprovechar TypeScript al máximo
+
+### Estructura de Commits
+```
+feat: agregar nueva funcionalidad
+fix: corregir bug
+docs: actualizar documentación
+refactor: refactorizar código
+test: agregar tests
+```
+
+---
+
+*Desarrollado con ❤️ por el equipo de desarrollo*

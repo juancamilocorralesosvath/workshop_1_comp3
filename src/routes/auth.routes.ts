@@ -4,10 +4,11 @@ import { authenticate } from '../middleware/auth.middleware';
 import { validate, registerSchema, loginSchema } from '../middleware/validation.middleware';
 
 const router = Router();
+const authController = new AuthController();
 
-router.post('/register', validate(registerSchema), AuthController.register);
+router.post('/register', validate(registerSchema), authController.registerNewUser);
 
-router.post('/login', validate(loginSchema), AuthController.login);
+router.post('/login', validate(loginSchema), authController.authenticateUser);
 
 router.post('/refresh', AuthController.refreshToken);
 

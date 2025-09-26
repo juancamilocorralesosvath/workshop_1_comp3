@@ -1,104 +1,66 @@
 import { Request, Response, NextFunction } from 'express';
-import { User } from '../models/User';
-import { Role } from '../models/Role';
-import { generateToken, generateRefreshToken } from '../utils/jwt';
 import { ResponseHelper } from '../utils/response';
-import { generateUserId } from '../utils/generateId';
+import { SUCCESS_MESSAGES } from '../config/constants';
+import { AuthService } from '../services/authService';
+import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO } from '../dto/AuthDTO';
+import { IAuthService } from '../interfaces/IAuthService';
 
 export class AuthController {
-  static async register(req: Request, res: Response, next: NextFunction) {
+  private readonly authService: IAuthService;
+
+  constructor(authService: IAuthService = new AuthService()) {
+    this.authService = authService;
+  }
+
+  registerNewUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password, fulll_name, age, phone } = req.body;
+      const registrationData = UserRegistrationDTO.fromRequest(req.body);
 
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return ResponseHelper.conflict(res, 'Email already registered');
-      }
+      await this.authService.validateEmailNotExists(registrationData.email);
 
-      const clientRole = await Role.findOne({ name: 'cliente' });
-      if (!clientRole) {
-        return ResponseHelper.error(res, 'Default role not found. Please contact administrator.', 500);
-      }
+      const { user: createdUser, role: assignedRole } = await this.authService.createUserWithClientRole(registrationData);
 
-      const userId = generateUserId();
+      const userWithoutPassword = await this.authService.getUserWithoutPassword(createdUser._id);
 
-      const user = new User({
-        id: userId,
-        email,
-        password,
-        fulll_name,
-        age,
-        phone,
-        rol: [clientRole._id]
-      });
+      const authTokens = this.authService.generateAuthTokens(
+        createdUser.id,
+        createdUser.email,
+        [assignedRole.name]
+      );
 
-      await user.save();
+      const authResponse = new AuthResponseDTO(userWithoutPassword, authTokens.accessToken, authTokens.refreshToken);
 
-      const userWithRoles = await User.findById(user._id).populate('rol', 'name').select('-password');
-
-      const token = generateToken({
-        userId: user.id,
-        email: user.email,
-        roles: [clientRole.name]
-      });
-
-      const refreshToken = generateRefreshToken(user.id);
-
-      return ResponseHelper.success(res, {
-        user: userWithRoles,
-        token,
-        refreshToken
-      }, 'User registered successfully', 201);
+      return ResponseHelper.success(res, authResponse, SUCCESS_MESSAGES.USER_REGISTERED, 201);
 
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  static async login(req: Request, res: Response, next: NextFunction) {
+  authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password } = req.body;
+      const credentials = UserCredentialsDTO.fromRequest(req.body);
 
-      const user = await User.findOne({ email }).populate('rol', 'name');
-      if (!user) {
-        return ResponseHelper.unauthorized(res, 'Invalid email or password');
-      }
+      const authenticatedUser = await this.authService.validateUserCredentials(credentials.email, credentials.password);
 
-      if (!user.isActive) {
-        return ResponseHelper.unauthorized(res, 'Account is deactivated');
-      }
+      const roleNames = this.authService.extractRoleNames(authenticatedUser);
 
-      const isPasswordValid = await user.comparePassword(password);
-      if (!isPasswordValid) {
-        return ResponseHelper.unauthorized(res, 'Invalid email or password');
-      }
+      const authTokens = this.authService.generateAuthTokens(
+        authenticatedUser.id,
+        authenticatedUser.email,
+        roleNames
+      );
 
-      user.lastLogin = new Date();
-      await user.save();
+      const userWithoutPassword = this.authService.removePasswordFromUserObject(authenticatedUser);
 
-      const roleNames = user.rol.map((role: any) => role.name);
+      const authResponse = new AuthResponseDTO(userWithoutPassword, authTokens.accessToken, authTokens.refreshToken);
 
-      const token = generateToken({
-        userId: user.id,
-        email: user.email,
-        roles: roleNames
-      });
-
-      const refreshToken = generateRefreshToken(user.id);
-
-      const userResponse = user.toObject();
-      delete userResponse.password;
-
-      return ResponseHelper.success(res, {
-        user: userResponse,
-        token,
-        refreshToken
-      }, 'Login successful');
+      return ResponseHelper.success(res, authResponse, SUCCESS_MESSAGES.LOGIN_SUCCESSFUL);
 
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static async refreshToken(req: Request, res: Response, next: NextFunction) {
     try {
