@@ -10,7 +10,7 @@ import {
   IUpdateUserData,
 } from '../interfaces/IUserService';
 
-export class UserService implements IUserService {
+class UserService implements IUserService {
  
   async findUserById(userId: string): Promise<any> {
     const user = await User.findOne({ id: userId })
@@ -23,6 +23,15 @@ export class UserService implements IUserService {
 
     return user;
   }
+
+  async findAll(): Promise<any>{
+        try{
+            const users = await User.find();
+            return users;
+        }catch(error){
+            throw error;
+        }
+    }
 
   async createNewUser(userData: ICreateUserData): Promise<any> {
     await this.validateEmailIsUnique(userData.email);
@@ -143,3 +152,5 @@ export class UserService implements IUserService {
     if (updateData.isActive !== undefined) user.isActive = updateData.isActive;
   }
 }
+
+export const userService = new UserService();
