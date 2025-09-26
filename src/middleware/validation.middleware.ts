@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { ResponseHelper } from '../utils/response';
 
 export const registerSchema = z.object({
-  email: z.string().email('Invalid email format'),
+  email: z.email('Invalid email format'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   full_name: z.string().min(2, 'Full name must be at least 2 characters'),
   age: z.string().min(1, 'Age is required'),
@@ -11,12 +11,12 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
+  email: z.email('Invalid email format'),
   password: z.string().min(1, 'Password is required'),
 });
 
 export const updateUserSchema = z.object({
-  email: z.string().email('Invalid email format').optional(),
+  email: z.email('Invalid email format').optional(),
   full_name: z.string().min(2, 'Full name must be at least 2 characters').optional(),
   age: z.string().min(1, 'Age is required').optional(),
   phone: z.string().min(10, 'Phone must be at least 10 characters').optional(),
@@ -44,7 +44,7 @@ export const validate = (schema: z.ZodSchema) => {
       next();
     } catch (error) {
       
-      return ResponseHelper.error(res, 'Validation failed', 400);
+      return ResponseHelper.error(res, 'Validation failed: ', 400);
     }
   };
 };

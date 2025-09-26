@@ -30,7 +30,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     const decoded = verifyToken(token);
     req.user = decoded;
 
-    next();f
+    next();
   } catch (error) {
     return ResponseHelper.unauthorized(res, 'Invalid or expired token');
   }

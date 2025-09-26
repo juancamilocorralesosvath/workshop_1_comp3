@@ -1,7 +1,7 @@
 import { User } from '../models/User';
 import { Role } from '../models/Role';
 import { generateToken, generateRefreshToken } from '../utils/jwt';
-import { generateUserId } from '../utils/generateId';
+import { generateUserId, generateRoleId } from '../utils/generateId';
 import { ERROR_MESSAGES } from '../config/constants';
 import { IAuthService, IUserRegistration, IAuthTokens, IUserWithRole } from '../interfaces/IAuthService';
 
@@ -18,7 +18,8 @@ class AuthService implements IAuthService {
     const defaultClientRole = await this.findDefaultClientRole();
     const uniqueUserId = generateUserId();
 
-    const newUser = await this.buildAndSaveUser(userData, uniqueUserId, defaultClientRole.id);
+    // Use MongoDB's _id for role reference (required by Mongoose Schema.Types.ObjectId)
+    const newUser = await this.buildAndSaveUser(userData, uniqueUserId, defaultClientRole._id);
 
     return { user: newUser, role: defaultClientRole };
   }
@@ -46,14 +47,29 @@ class AuthService implements IAuthService {
   }
 
   private async findDefaultClientRole() {
-    const clientRole = await Role.findOne({ name: 'cliente' });
-    if (!clientRole) {
-      throw new Error(ERROR_MESSAGES.DEFAULT_ROLE_NOT_FOUND);
+    try {
+      let clientRole = await Role.findOne({ name: 'cliente' });
+
+      
+      if (!clientRole) {
+        console.log('📝 Creating default "cliente" role...');
+        clientRole = new Role({
+          id: generateRoleId(),
+          name: 'cliente',
+          permissions: []
+        });
+        await clientRole.save();
+        console.log(' Default "cliente" role created');
+      }
+
+      return clientRole;
+    } catch (error) {
+      console.error(' Error creating default role:', error);
+      throw new Error('Unable to create or find default client role');
     }
-    return clientRole;
   }
 
-  private async buildAndSaveUser(userData: IUserRegistration, userId: string, roleId: string) {
+  private async buildAndSaveUser(userData: IUserRegistration, userId: string, roleObjectId: any) {
     const newUser = new User({
       id: userId,
       email: userData.email,
@@ -61,7 +77,7 @@ class AuthService implements IAuthService {
       full_name: userData.full_name,
       age: userData.age,
       phone: userData.phone,
-      rol: [roleId]
+      rol: [roleObjectId]
     });
 
     await newUser.save();
