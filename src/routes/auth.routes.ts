@@ -10,14 +10,14 @@ router.post('/register', validate(registerSchema), authController.registerNewUse
 
 router.post('/login', validate(loginSchema), authController.authenticateUser);
 
-router.post('/refresh', AuthController.refreshToken);
+router.post('/refresh', authController.refreshToken);
 
-router.post('/logout', authenticate, AuthController.logout);
+router.post('/logout', authenticate, authController.logout);
 
-router.get('/profile', authenticate, AuthController.getProfile);
+router.get('/profile', authenticate, authController.getProfile);
 
-router.put('/profile', authenticate, AuthController.updateProfile);
+router.put('/profile', authenticate, authController.updateProfile);
 
-router.put('/change-password', authenticate, AuthController.changePassword);
+router.put('/change-password', authenticate, authController.changePassword);
 
 export default router;

@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import { ResponseHelper } from '../utils/response';
 import { SUCCESS_MESSAGES } from '../config/constants';
 import { AuthService } from '../services/authService';
-import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO } from '../dto/AuthDTO';
+import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO, UserProfileUpdateDTO, PasswordChangeDTO } from '../dto/AuthDTO';
 import { IAuthService } from '../interfaces/IAuthService';
+import { User } from '../models/User';
 
 export class AuthController {
   private readonly authService: IAuthService;
@@ -62,7 +63,7 @@ export class AuthController {
     }
   };
 
-  static async refreshToken(req: Request, res: Response, next: NextFunction) {
+  refreshToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { refreshToken } = req.body;
 
@@ -70,100 +71,87 @@ export class AuthController {
         return ResponseHelper.unauthorized(res, 'Refresh token is required');
       }
 
-      const decoded = require('jsonwebtoken').verify(refreshToken, process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production');
+      const jwt = require('jsonwebtoken');
+      const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production');
 
       const user = await User.findOne({ id: decoded.userId }).populate('rol', 'name');
       if (!user || !user.isActive) {
         return ResponseHelper.unauthorized(res, 'User not found or deactivated');
       }
 
-      const roleNames = user.rol.map((role: any) => role.name);
+      const roleNames = this.authService.extractRoleNames(user);
 
-      const newToken = generateToken({
-        userId: user.id,
-        email: user.email,
-        roles: roleNames
-      });
-
-      const newRefreshToken = generateRefreshToken(user.id);
+      const authTokens = this.authService.generateAuthTokens(user.id, user.email, roleNames);
 
       return ResponseHelper.success(res, {
-        token: newToken,
-        refreshToken: newRefreshToken
-      }, 'Token refreshed successfully');
+        token: authTokens.accessToken,
+        refreshToken: authTokens.refreshToken
+      }, SUCCESS_MESSAGES.TOKEN_REFRESHED);
 
     } catch (error) {
       return ResponseHelper.unauthorized(res, 'Invalid refresh token');
     }
-  }
+  };
 
-  static async logout(req: Request, res: Response, next: NextFunction) {
+  logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      return ResponseHelper.success(res, null, 'Logout successful');
+      return ResponseHelper.success(res, null, SUCCESS_MESSAGES.LOGOUT_SUCCESSFUL);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  static async getProfile(req: Request, res: Response, next: NextFunction) {
+  getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
         return ResponseHelper.unauthorized(res, 'Authentication required');
       }
 
-      const user = await User.findOne({ id: req.user.userId }).populate('rol', 'name').select('-password');
-      if (!user) {
-        return ResponseHelper.notFound(res, 'User not found');
-      }
-
-      return ResponseHelper.success(res, user, 'Profile retrieved successfully');
+      const user = await this.authService.getUserWithoutPassword(req.user.userId);
+      return ResponseHelper.success(res, user, SUCCESS_MESSAGES.PROFILE_RETRIEVED);
 
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  static async updateProfile(req: Request, res: Response, next: NextFunction) {
+  updateProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
         return ResponseHelper.unauthorized(res, 'Authentication required');
       }
 
-      const { fulll_name, age, phone } = req.body;
+      const profileUpdateData = UserProfileUpdateDTO.fromRequest(req.body);
 
       const user = await User.findOne({ id: req.user.userId });
       if (!user) {
         return ResponseHelper.notFound(res, 'User not found');
       }
 
-      if (fulll_name) user.fulll_name = fulll_name;
-      if (age) user.age = age;
-      if (phone) user.phone = phone;
+      if (profileUpdateData.fullName) user.fulll_name = profileUpdateData.fullName;
+      if (profileUpdateData.age) user.age = profileUpdateData.age;
+      if (profileUpdateData.phone) user.phone = profileUpdateData.phone;
 
       await user.save();
 
-      const updatedUser = await User.findById(user._id).populate('rol', 'name').select('-password');
+      const updatedUser = await this.authService.getUserWithoutPassword(user._id);
 
-      return ResponseHelper.success(res, updatedUser, 'Profile updated successfully');
+      return ResponseHelper.success(res, updatedUser, SUCCESS_MESSAGES.PROFILE_UPDATED);
 
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  static async changePassword(req: Request, res: Response, next: NextFunction) {
+  changePassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
         return ResponseHelper.unauthorized(res, 'Authentication required');
       }
 
-      const { currentPassword, newPassword } = req.body;
+      const passwordChangeData = PasswordChangeDTO.fromRequest(req.body);
 
-      if (!currentPassword || !newPassword) {
-        return ResponseHelper.error(res, 'Current password and new password are required', 400);
-      }
-
-      if (newPassword.length < 6) {
+      if (passwordChangeData.newPassword.length < 6) {
         return ResponseHelper.error(res, 'New password must be at least 6 characters', 400);
       }
 
@@ -172,18 +160,18 @@ export class AuthController {
         return ResponseHelper.notFound(res, 'User not found');
       }
 
-      const isCurrentPasswordValid = await user.comparePassword(currentPassword);
+      const isCurrentPasswordValid = await user.comparePassword(passwordChangeData.currentPassword);
       if (!isCurrentPasswordValid) {
         return ResponseHelper.unauthorized(res, 'Current password is incorrect');
       }
 
-      user.password = newPassword;
+      user.password = passwordChangeData.newPassword;
       await user.save();
 
-      return ResponseHelper.success(res, null, 'Password changed successfully');
+      return ResponseHelper.success(res, null, SUCCESS_MESSAGES.PASSWORD_CHANGED);
 
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
