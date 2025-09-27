@@ -92,8 +92,7 @@ class UserService implements IUserService {
       return await this.getDefaultClientRole();
     }
 
-    await this.validateRolesExist(roleIds);
-    return roleIds;
+    return await this.validateRolesExist(roleIds);
   }
 
   private async getDefaultClientRole() {
@@ -104,11 +103,12 @@ class UserService implements IUserService {
     return [clientRole._id];
   }
 
-  private async validateRolesExist(roleIds: string[]): Promise<void> {
+  private async validateRolesExist(roleIds: string[]): Promise<any[]> {
     const foundRoles = await Role.find({ _id: { $in: roleIds } });
     if (foundRoles.length !== roleIds.length) {
       throw new Error(ERROR_MESSAGES.ROLE_NOT_FOUND);
     }
+    return foundRoles.map(role => role._id);
   }
 
   private async buildAndSaveUser(userData: ICreateUserData, userId: string, roleIds: any[]) {

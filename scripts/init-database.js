@@ -20,11 +20,16 @@ async function initializeDatabase() {
 
     const db = client.db(DATABASE_NAME);
 
-    // Limpiar datos existentes
-    console.log('🧹 Cleaning existing data...');
-    await db.collection('users').deleteMany({});
-    await db.collection('roles').deleteMany({});
-    await db.collection('permissions').deleteMany({});
+    // Limpiar TODA la base de datos
+    console.log('🧹 Cleaning entire database...');
+    const collections = await db.listCollections().toArray();
+
+    for (const collection of collections) {
+      console.log(`   Dropping collection: ${collection.name}`);
+      await db.collection(collection.name).drop();
+    }
+
+    console.log('✅ Database completely cleaned');
 
     // 1. Crear roles
     console.log('📝 Creating roles...');

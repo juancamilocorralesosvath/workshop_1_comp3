@@ -321,7 +321,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"newuser@test.com\",\n  \"password\": \"newuser123\",\n  \"full_name\": \"New Test User\",\n  \"age\": 25,\n  \"phone\": \"+1234567899\"\n}"
+							"raw": "{\n  \"email\": \"newuser-{{$timestamp}}@test.com\",\n  \"password\": \"newuser123\",\n  \"full_name\": \"New Test User\",\n  \"age\": 25,\n  \"phone\": \"+1234567899\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/users",
@@ -440,7 +440,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"newuser@test.com\",\n  \"password\": \"newuser123\",\n  \"full_name\": \"New User\",\n  \"age\": 25,\n  \"phone\": \"+1234567894\"\n}"
+							"raw": "{\n  \"email\": \"admin-user-{{$timestamp}}@test.com\",\n  \"password\": \"newuser123\",\n  \"full_name\": \"Admin Created User\",\n  \"age\": 25,\n  \"phone\": \"+1234567894\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/users",
@@ -631,7 +631,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"recepuser@test.com\",\n  \"password\": \"recepuser123\",\n  \"full_name\": \"Recep Created User\",\n  \"age\": 22,\n  \"phone\": \"+1234567895\"\n}"
+							"raw": "{\n  \"email\": \"recep-user-{{$timestamp}}@test.com\",\n  \"password\": \"recepuser123\",\n  \"full_name\": \"Recep Created User\",\n  \"age\": 22,\n  \"phone\": \"+1234567895\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/users",
