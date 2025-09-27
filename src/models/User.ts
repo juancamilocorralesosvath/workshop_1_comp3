@@ -10,7 +10,6 @@ export interface IUser extends Document {
   phone: string;
   rol: string[];
   isActive: boolean;
-  lastLogin?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -54,16 +53,12 @@ const userSchema = new Schema<IUser>({
   isActive: {
     type: Boolean,
     default: true
-  },
-  lastLogin: {
-    type: Date
   }
 }, {
   timestamps: true
 });
 
-//Creamos indices para mejorar el rendimiento de las consultas
-// Hash password before saving
+
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
 
@@ -76,7 +71,7 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Compare password method
+
 userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };

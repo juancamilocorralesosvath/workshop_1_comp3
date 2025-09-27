@@ -4,22 +4,20 @@ import { generateToken, generateRefreshToken } from '../utils/jwt';
 import { generateUserId, generateRoleId } from '../utils/generateId';
 import { ERROR_MESSAGES } from '../utils/errorMessages';
 import { IAuthService, IUserRegistration, IAuthTokens, IUserWithRole } from '../interfaces/IAuthService';
-import createError from 'http-errors';
+import bcrypt from 'bcryptjs';
 
 class AuthService implements IAuthService {
-  
+
   async validateEmailNotExists(email: string): Promise<void> {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw createError.Conflict(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
+      throw this.createHttpError(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS, 409);
     }
   }
 
   async createUserWithClientRole(userData: IUserRegistration): Promise<IUserWithRole> {
     const defaultClientRole = await this.findDefaultClientRole();
     const uniqueUserId = generateUserId();
-
-    // Use MongoDB's _id for role reference (required by Mongoose Schema.Types.ObjectId)
     const newUser = await this.buildAndSaveUser(userData, uniqueUserId, defaultClientRole._id);
 
     return { user: newUser, role: defaultClientRole };
@@ -29,8 +27,14 @@ class AuthService implements IAuthService {
     const userWithRoles = await this.findUserByEmailWithRoles(email);
 
     this.validateUserIsActive(userWithRoles);
-    await this.validatePassword(userWithRoles, password);
-    await this.updateLastLoginTime(userWithRoles);
+    const isPasswordValid = this.comparePassword(password, userWithRoles.password);
+    if (!isPasswordValid) {
+
+      throw this.createHttpError(ERROR_MESSAGES.ACCESS_DENIED, 401);
+
+    }
+
+    await userWithRoles.save();
 
     return userWithRoles;
   }
@@ -51,9 +55,9 @@ class AuthService implements IAuthService {
     try {
       let clientRole = await Role.findOne({ name: 'cliente' });
 
-      
+
       if (!clientRole) {
-        console.log('📝 Creating default "cliente" role...');
+        console.log(' Creating default "cliente" role...');
         clientRole = new Role({
           id: generateRoleId(),
           name: 'cliente',
@@ -66,7 +70,7 @@ class AuthService implements IAuthService {
       return clientRole;
     } catch (error) {
       console.error(' Error creating default role:', error);
-      throw createError.InternalServerError('Unable to create or find default client role');
+      throw this.createHttpError(ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 500);
     }
   }
 
@@ -88,28 +92,22 @@ class AuthService implements IAuthService {
   private async findUserByEmailWithRoles(email: string) {
     const userFound = await User.findOne({ email }).populate('rol', 'name');
     if (!userFound) {
-      throw createError.Unauthorized(ERROR_MESSAGES.INVALID_CREDENTIALS);
+      throw this.createHttpError(ERROR_MESSAGES.ACCESS_DENIED, 401);
     }
     return userFound;
   }
 
   private validateUserIsActive(user: any): void {
     if (!user.isActive) {
-      throw createError.Forbidden(ERROR_MESSAGES.ACCOUNT_DEACTIVATED);
+      throw this.createHttpError(ERROR_MESSAGES.ACCESS_DENIED, 403);
     }
   }
 
-  private async validatePassword(user: any, password: string): Promise<void> {
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      throw createError.Unauthorized(ERROR_MESSAGES.INVALID_CREDENTIALS);
-    }
+
+  async comparePassword(incomingPassword: string, currentPassword: string): Promise<boolean> {
+    return await bcrypt.compare(incomingPassword, currentPassword);
   }
 
-  private async updateLastLoginTime(user: any): Promise<void> {
-    user.lastLogin = new Date();
-    await user.save();
-  }
 
   extractRoleNames(user: any): string[] {
     return user.rol.map((role: any) => role.name);
@@ -120,6 +118,15 @@ class AuthService implements IAuthService {
     delete userWithoutPassword.password;
     return userWithoutPassword;
   }
+
+  createHttpError(message: string, status: number): Error {
+    const err = new Error(message);
+    (err as any).status = status;
+    return err;
+  }
+
+
+
 }
 
 export const authService = new AuthService;

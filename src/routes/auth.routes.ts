@@ -10,8 +10,6 @@ authRouter.post('/register', validate(registerSchema), authController.registerNe
 
 authRouter.post('/login', validate(loginSchema), authController.authenticateUser);
 
-authRouter.post('/refresh', authController.refreshToken);
-
 authRouter.post('/logout', authenticate, authController.logout);
 
 authRouter.get('/profile', authenticate, authController.getProfile);
