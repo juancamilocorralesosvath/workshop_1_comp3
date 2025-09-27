@@ -6,7 +6,6 @@ import createError from 'http-errors';
 
 import {
   IUserService,
-  IUserFilters,
   ICreateUserData,
   IUpdateUserData,
 } from '../interfaces/IUserService';

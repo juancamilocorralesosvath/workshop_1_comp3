@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { SUCCESS_MESSAGES } from '../utils/successMessages';
 import { userService } from '../services/userService';
-import { IUserService } from '../interfaces/IUserService';
 import { CreateUserDTO, UpdateUserDTO, UserIdDTO, AssignRolesDTO } from '../dto/UserDTO';
 
 export class UserController {

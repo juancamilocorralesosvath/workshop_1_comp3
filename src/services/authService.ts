@@ -27,14 +27,13 @@ class AuthService implements IAuthService {
     const userWithRoles = await this.findUserByEmailWithRoles(email);
 
     this.validateUserIsActive(userWithRoles);
-    const isPasswordValid = this.comparePassword(password, userWithRoles.password);
+
+    const isPasswordValid = await this.comparePassword(password, userWithRoles.password);
     if (!isPasswordValid) {
-
-      throw this.createHttpError(ERROR_MESSAGES.ACCESS_DENIED, 401);
-
+      throw this.createHttpError(ERROR_MESSAGES.INVALID_CREDENTIALS, 401);
     }
 
-    await userWithRoles.save();
+    await this.updateLastLoginTime(userWithRoles);
 
     return userWithRoles;
   }
@@ -55,9 +54,7 @@ class AuthService implements IAuthService {
     try {
       let clientRole = await Role.findOne({ name: 'cliente' });
 
-
       if (!clientRole) {
-        console.log(' Creating default "cliente" role...');
         clientRole = new Role({
           id: generateRoleId(),
           name: 'cliente',
@@ -92,22 +89,25 @@ class AuthService implements IAuthService {
   private async findUserByEmailWithRoles(email: string) {
     const userFound = await User.findOne({ email }).populate('rol', 'name');
     if (!userFound) {
-      throw this.createHttpError(ERROR_MESSAGES.ACCESS_DENIED, 401);
+      throw this.createHttpError(ERROR_MESSAGES.INVALID_CREDENTIALS, 401);
     }
     return userFound;
   }
 
   private validateUserIsActive(user: any): void {
     if (!user.isActive) {
-      throw this.createHttpError(ERROR_MESSAGES.ACCESS_DENIED, 403);
+      throw this.createHttpError(ERROR_MESSAGES.ACCOUNT_DEACTIVATED, 403);
     }
   }
 
+  private async updateLastLoginTime(user: any): Promise<void> {
+    user.lastLogin = new Date();
+    await user.save();
+  }
 
   async comparePassword(incomingPassword: string, currentPassword: string): Promise<boolean> {
     return await bcrypt.compare(incomingPassword, currentPassword);
   }
-
 
   extractRoleNames(user: any): string[] {
     return user.rol.map((role: any) => role.name);
@@ -119,14 +119,12 @@ class AuthService implements IAuthService {
     return userWithoutPassword;
   }
 
-  createHttpError(message: string, status: number): Error {
+
+  private createHttpError(message: string, status: number): Error {
     const err = new Error(message);
     (err as any).status = status;
     return err;
   }
-
-
-
 }
 
-export const authService = new AuthService;
+export const authService = new AuthService(); 
