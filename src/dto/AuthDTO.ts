@@ -1,70 +1,34 @@
-export class UserRegistrationDTO {
-  constructor(
-    public readonly email: string,
-    public readonly password: string,
-    public readonly full_name: string,
-    public readonly age: number,
-    public readonly phone: string,
-    public readonly roleIds?: string[]
-  ) {}
 
-  static fromRequest(body: any): UserRegistrationDTO {
-    return new UserRegistrationDTO(
-      body.email,
-      body.password,
-      body.full_name,
-      body.age,
-      body.phone,
-      body.roleIds
-    );
-  }
+import { User } from '../models/User';
+
+export interface UserRegistrationData {
+  email: string;
+  password: string;
+  full_name: string;
+  age: number;
+  phone: string;
+  roleIds?: string[];
 }
 
-export class UserCredentialsDTO {
-  constructor(
-    public readonly email: string,
-    public readonly password: string
-  ) {}
-
-  static fromRequest(body: any): UserCredentialsDTO {
-    return new UserCredentialsDTO(body.email, body.password);
-  }
+export interface UserCredentialsData {
+  email: string;
+  password: string;
 }
 
-export class AuthResponseDTO {
-  constructor(
-    public readonly user: any,
-    public readonly accessToken: string,
-    public readonly refreshToken: string
-  ) {}
+export interface UserProfileUpdateData {
+  full_name?: string;
+  age?: number;
+  phone?: string;
 }
 
-export class UserProfileUpdateDTO {
-  constructor(
-    public readonly fullName?: string,
-    public readonly age?: number,
-    public readonly phone?: string
-  ) {}
-
-  static fromRequest(body: any): UserProfileUpdateDTO {
-    return new UserProfileUpdateDTO(
-      body.full_name,
-      body.age,
-      body.phone
-    );
-  }
+export interface PasswordChangeData {
+  currentPassword: string;
+  newPassword: string;
 }
 
-export class PasswordChangeDTO {
-  constructor(
-    public readonly currentPassword: string,
-    public readonly newPassword: string
-  ) {}
 
-  static fromRequest(body: any): PasswordChangeDTO {
-    return new PasswordChangeDTO(
-      body.currentPassword,
-      body.newPassword
-    );
-  }
+export interface AuthResponse {
+  user: InstanceType<typeof User>;
+  accessToken: string;
+  refreshToken: string;
 }

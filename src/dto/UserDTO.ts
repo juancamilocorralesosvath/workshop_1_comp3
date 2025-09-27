@@ -1,80 +1,36 @@
-
-export class CreateUserDTO {
-  constructor(
-    public readonly email: string,
-    public readonly password: string,
-    public readonly full_name: string,
-    public readonly age: number,
-    public readonly phone: string,
-    public readonly roleIds?: string[]
-  ) {}
-
-  static fromRequest(body: any): CreateUserDTO {
-    return new CreateUserDTO(
-      body.email,
-      body.password,
-      body.full_name,
-      body.age,
-      body.phone,
-      body.roleIds
-    );
-  }
+// Tipos para usuarios
+export interface CreateUserInput {
+  email: string;
+  password: string;
+  full_name: string;
+  age: number;
+  phone: string;
+  roleIds?: string[];
 }
 
-export class UpdateUserDTO {
-  constructor(
-    public readonly email?: string,
-    public readonly full_name?: string,
-    public readonly age?: number,
-    public readonly phone?: string,
-    public readonly isActive?: boolean
-  ) {}
-
-  static fromRequest(body: any): UpdateUserDTO {
-    return new UpdateUserDTO(
-      body.email,
-      body.full_name,
-      body.age,
-      body.phone,
-      body.isActive
-    );
-  }
+export interface UpdateUserInput {
+  email?: string;
+  full_name?: string;
+  age?: number;
+  phone?: string;
+  isActive?: boolean;
 }
 
-export class AssignRolesDTO {
-  constructor(
-    public readonly userId: string,
-    public readonly roleIds: string[]
-  ) {}
-
-  static fromRequest(body: any): AssignRolesDTO {
-    return new AssignRolesDTO(body.userId, body.roleIds);
-  }
+export interface AssignRolesInput {
+  userId: string;
+  roleIds: string[];
 }
 
-export class UserIdDTO {
-  constructor(public readonly userId: string) {}
-
-  static fromParams(params: any): UserIdDTO {
-    return new UserIdDTO(params.id);
-  }
+export interface CreateRoleInput {
+  name: string;
+  permissions?: string[];
 }
 
-export class CreateRoleDTO {
-  constructor(
-    public readonly name: string,
-    public readonly permissions?: string[]
-  ) {}
-
-  static fromRequest(body: any): CreateRoleDTO {
-    return new CreateRoleDTO(body.name, body.permissions);
-  }
+export interface CreatePermissionInput {
+  name: string;
 }
 
-export class CreatePermissionDTO {
-  constructor(public readonly name: string) {}
-
-  static fromRequest(body: any): CreatePermissionDTO {
-    return new CreatePermissionDTO(body.name);
-  }
+// Tipos de parámetros de ruta
+export interface UserIdParams {
+  id: string;
 }
