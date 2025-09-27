@@ -56,8 +56,5 @@ const membershipSchema = new Schema<IMembership>({
   timestamps: true
 });
 
-membershipSchema.index({ name: 1 });
-membershipSchema.index({ id: 1 });
-membershipSchema.index({ status: 1 });
 
 export const Membership = mongoose.model<IMembership>('Membership', membershipSchema);

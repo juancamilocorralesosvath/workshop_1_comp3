@@ -76,8 +76,4 @@ userSchema.methods.comparePassword = async function(candidatePassword: string): 
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-//Creamos indices para mejorar el rendimiento de las consultas
-userSchema.index({ email: 1 });
-userSchema.index({ id: 1 });
-
 export const User = mongoose.model<IUser>('User', userSchema);

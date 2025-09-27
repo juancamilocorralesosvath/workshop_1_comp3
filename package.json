@@ -24,7 +24,7 @@
     "typescript": "^5"
   },
   "scripts": {
-    "start": "npx tsx src/index.ts",
+    "start": "bun --watch src/index.ts",
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
