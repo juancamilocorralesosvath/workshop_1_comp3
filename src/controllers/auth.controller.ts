@@ -3,7 +3,7 @@ import { SUCCESS_MESSAGES } from '../utils/successMessages';
 import { authService } from '../services/authService';
 import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO, UserProfileUpdateDTO, PasswordChangeDTO } from '../dto/AuthDTO';
 import { User } from '../models/User';
-import { verifyToken } from '../utils/jwt';
+import { verifyToken } from '../services/jwtService';
 import { ERROR_MESSAGES } from '../utils/errorMessages';
 
 export class AuthController {
