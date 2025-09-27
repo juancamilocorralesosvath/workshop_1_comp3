@@ -1,3 +1,6 @@
+
+import { User } from '../models/User';
+
 export class UserRegistrationDTO {
   constructor(
     public readonly email: string,
@@ -8,7 +11,14 @@ export class UserRegistrationDTO {
     public readonly roleIds?: string[]
   ) {}
 
-  static fromRequest(body: any): UserRegistrationDTO {
+  static fromRequest(body: {
+    email: string;
+    password: string;
+    full_name: string;
+    age: number;
+    phone: string;
+    roleIds?: string[];
+  }): UserRegistrationDTO {
     return new UserRegistrationDTO(
       body.email,
       body.password,
@@ -26,14 +36,17 @@ export class UserCredentialsDTO {
     public readonly password: string
   ) {}
 
-  static fromRequest(body: any): UserCredentialsDTO {
+  static fromRequest(body: {
+    email: string;
+    password: string;
+  }): UserCredentialsDTO {
     return new UserCredentialsDTO(body.email, body.password);
   }
 }
 
 export class AuthResponseDTO {
   constructor(
-    public readonly user: any,
+    public readonly user: InstanceType<typeof User>,
     public readonly accessToken: string,
     public readonly refreshToken: string
   ) {}
@@ -46,7 +59,11 @@ export class UserProfileUpdateDTO {
     public readonly phone?: string
   ) {}
 
-  static fromRequest(body: any): UserProfileUpdateDTO {
+  static fromRequest(body: {
+    full_name?: string;
+    age?: number;
+    phone?: string;
+  }): UserProfileUpdateDTO {
     return new UserProfileUpdateDTO(
       body.full_name,
       body.age,
@@ -61,7 +78,10 @@ export class PasswordChangeDTO {
     public readonly newPassword: string
   ) {}
 
-  static fromRequest(body: any): PasswordChangeDTO {
+  static fromRequest(body: {
+    currentPassword: string;
+    newPassword: string;
+  }): PasswordChangeDTO {
     return new PasswordChangeDTO(
       body.currentPassword,
       body.newPassword

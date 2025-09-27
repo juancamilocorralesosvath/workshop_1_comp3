@@ -1,3 +1,4 @@
+import { User } from '../models/User';
 
 export class CreateUserDTO {
   constructor(
@@ -9,7 +10,14 @@ export class CreateUserDTO {
     public readonly roleIds?: string[]
   ) {}
 
-  static fromRequest(body: any): CreateUserDTO {
+  static fromRequest(body: {
+    email: string;
+    password: string;
+    full_name: string;
+    age: number;
+    phone: string;
+    roleIds?: string[];
+  }): CreateUserDTO {
     return new CreateUserDTO(
       body.email,
       body.password,
@@ -30,7 +38,13 @@ export class UpdateUserDTO {
     public readonly isActive?: boolean
   ) {}
 
-  static fromRequest(body: any): UpdateUserDTO {
+  static fromRequest(body: {
+    email?: string;
+    full_name?: string;
+    age?: number;
+    phone?: string;
+    isActive?: boolean;
+  }): UpdateUserDTO {
     return new UpdateUserDTO(
       body.email,
       body.full_name,
@@ -47,7 +61,10 @@ export class AssignRolesDTO {
     public readonly roleIds: string[]
   ) {}
 
-  static fromRequest(body: any): AssignRolesDTO {
+  static fromRequest(body: {
+    userId: string;
+    roleIds: string[];
+  }): AssignRolesDTO {
     return new AssignRolesDTO(body.userId, body.roleIds);
   }
 }
@@ -55,7 +72,7 @@ export class AssignRolesDTO {
 export class UserIdDTO {
   constructor(public readonly userId: string) {}
 
-  static fromParams(params: any): UserIdDTO {
+  static fromParams(params: { id: string }): UserIdDTO {
     return new UserIdDTO(params.id);
   }
 }
@@ -66,7 +83,10 @@ export class CreateRoleDTO {
     public readonly permissions?: string[]
   ) {}
 
-  static fromRequest(body: any): CreateRoleDTO {
+  static fromRequest(body: {
+    name: string;
+    permissions?: string[];
+  }): CreateRoleDTO {
     return new CreateRoleDTO(body.name, body.permissions);
   }
 }
@@ -74,7 +94,7 @@ export class CreateRoleDTO {
 export class CreatePermissionDTO {
   constructor(public readonly name: string) {}
 
-  static fromRequest(body: any): CreatePermissionDTO {
+  static fromRequest(body: { name: string }): CreatePermissionDTO {
     return new CreatePermissionDTO(body.name);
   }
 }
