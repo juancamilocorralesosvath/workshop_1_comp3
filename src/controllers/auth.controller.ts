@@ -87,7 +87,6 @@ export class AuthController {
       if (!req.user) {
         return res.status(401).json({ message: 'Unauthorized' });
 
-
       }
 
       const profileUpdateData = UserProfileUpdateDTO.fromRequest(req.body);

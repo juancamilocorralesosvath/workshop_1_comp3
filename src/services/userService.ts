@@ -2,7 +2,6 @@ import { User } from '../models/User';
 import { Role } from '../models/Role';
 import { generateUserId } from '../utils/generateId';
 import { ERROR_MESSAGES } from '../utils/errorMessages';
-import createError from 'http-errors';
 
 import {
   IUserService,
@@ -18,20 +17,20 @@ class UserService implements IUserService {
       .select('-password');
 
     if (!user) {
-      throw createError.NotFound(ERROR_MESSAGES.USER_NOT_FOUND);
+      throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
     }
 
     return user;
   }
 
-  async findAll(): Promise<any>{
-        try{
-            const users = await User.find();
-            return users;
-        }catch(error){
-            throw error;
-        }
+  async findAll(): Promise<any> {
+    try {
+      const users = await User.find();
+      return users;
+    } catch (error) {
+      throw error;
     }
+  }
 
   async createNewUser(userData: ICreateUserData): Promise<any> {
     await this.validateEmailIsUnique(userData.email);
@@ -40,7 +39,6 @@ class UserService implements IUserService {
     const uniqueUserId = generateUserId();
 
     const newUser = await this.buildAndSaveUser(userData, uniqueUserId, assignedRoles);
-    
 
     return await this.getUserWithRolesById(newUser.id);
   }
@@ -64,7 +62,6 @@ class UserService implements IUserService {
   }
 
   async assignRolesToUser(userId: string, roleIds: string[]): Promise<any> {
-    
     const userToUpdate = await this.findUserEntityById(userId);
     await this.validateRolesExist(roleIds);
 
@@ -83,12 +80,10 @@ class UserService implements IUserService {
     return await this.getUserWithRolesById(userToToggle.id);
   }
 
-  
-
   private async validateEmailIsUnique(email: string): Promise<void> {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw createError.Conflict(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
+      throw new Error(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
     }
   }
 
@@ -104,7 +99,7 @@ class UserService implements IUserService {
   private async getDefaultClientRole() {
     const clientRole = await Role.findOne({ name: 'cliente' });
     if (!clientRole) {
-      throw createError.InternalServerError(ERROR_MESSAGES.DEFAULT_ROLE_NOT_FOUND);
+      throw new Error(ERROR_MESSAGES.DEFAULT_ROLE_NOT_FOUND);
     }
     return [clientRole._id];
   }
@@ -112,7 +107,7 @@ class UserService implements IUserService {
   private async validateRolesExist(roleIds: string[]): Promise<void> {
     const foundRoles = await Role.find({ _id: { $in: roleIds } });
     if (foundRoles.length !== roleIds.length) {
-      throw createError.NotFound(ERROR_MESSAGES.ROLE_NOT_FOUND);
+      throw new Error(ERROR_MESSAGES.ROLE_NOT_FOUND);
     }
   }
 
@@ -134,7 +129,7 @@ class UserService implements IUserService {
   private async findUserEntityById(userId: string) {
     const user = await User.findOne({ id: userId });
     if (!user) {
-      throw createError.NotFound(ERROR_MESSAGES.USER_NOT_FOUND);
+      throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
     }
     return user;
   }
