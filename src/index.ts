@@ -1,7 +1,8 @@
 import express, { Express } from "express";
-import { db } from "../db/connectionDB";
+import { db } from "./db/connectionDB";
 import { userRouter } from "./routes/user.routes";
 import { authRouter } from "./routes/auth.routes";
+import { membershipRouter } from "./routes/membership.routes";
 
 
 const app: Express = express();
@@ -17,6 +18,7 @@ app.get('/health', (req, res) => {
 
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
+app.use('/memberships', membershipRouter)
 
 // 404 handler
 app.use((req, res) => {

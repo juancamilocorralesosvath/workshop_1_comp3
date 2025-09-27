@@ -11,3 +11,7 @@ export const generateRoleId = (): string => {
 export const generatePermissionId = (): string => {
   return `perm_${nanoid(10)}`;
 };
+
+export const generateMembershipId = (): string => {
+  return `membership_${nanoid(10)}`;
+};

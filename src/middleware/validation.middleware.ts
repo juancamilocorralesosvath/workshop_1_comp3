@@ -37,6 +37,30 @@ export const createPermissionSchema = z.object({
   name: z.string().min(2, 'Permission name must be at least 2 characters'),
 });
 
+export const createMembershipSchema = z.object({
+  name: z.string().min(2, 'Membership name must be at least 2 characters'),
+  cost: z.number().min(0, 'Cost must be a positive number'),
+  max_classes_assistance: z.number().int().min(0, 'Max classes assistance must be a positive number'),
+  max_gym_assistance: z.number().int().min(0, 'Max gym assistance must be a positive number'),
+  duration_months: z.number().int().refine(
+    (val) => val === 1 || val === 12,
+    { message: 'Duration must be 1 (monthly) or 12 (annual) months' }
+  ),
+  status: z.boolean().optional(),
+});
+
+export const updateMembershipSchema = z.object({
+  name: z.string().min(2, 'Membership name must be at least 2 characters').optional(),
+  cost: z.number().min(0, 'Cost must be a positive number').optional(),
+  max_classes_assistance: z.number().int().min(0, 'Max classes assistance must be a positive number').optional(),
+  max_gym_assistance: z.number().int().min(0, 'Max gym assistance must be a positive number').optional(),
+  duration_months: z.number().int().refine(
+    (val) => val === 1 || val === 12,
+    { message: 'Duration must be 1 (monthly) or 12 (annual) months' }
+  ).optional(),
+  status: z.boolean().optional(),
+});
+
 export const validate = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {

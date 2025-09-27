@@ -23,6 +23,11 @@ export const ERROR_MESSAGES = {
   PERMISSION_NOT_FOUND: 'Permiso no encontrado',
   PERMISSION_ALREADY_EXISTS: 'El permiso ya existe',
 
+  
+  MEMBERSHIP_NOT_FOUND: 'Membresía no encontrada',
+  MEMBERSHIP_ALREADY_EXISTS: 'La membresía ya existe',
+  MEMBERSHIP_NAME_ALREADY_EXISTS: 'El nombre de la membresía ya está en uso',
+
 
   VALIDATION_FAILED: 'Error de validación',
   REQUIRED_FIELD_MISSING: 'Campo requerido faltante',

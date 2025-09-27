@@ -1,0 +1,413 @@
+{
+	"info": {
+		"_postman_id": "e5afcf96-6311-408d-be51-adf48481fd2a",
+		"name": "membership & subscription tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44658492"
+	},
+	"item": [
+		{
+			"name": "Login Admin Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Access token is received and saved to environment\", function () {",
+							"    // Parsea la respuesta JSON",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    // Verifica que el accessToken existe en la respuesta",
+							"    pm.expect(responseData.accessToken).to.exist;",
+							"    pm.expect(responseData.accessToken).to.be.a('string');",
+							"",
+							"    // Guarda el accessToken en una variable de entorno",
+							"    pm.environment.set(\"accessToken\", responseData.accessToken);",
+							"    ",
+							"    console.log(\"Access Token guardado exitosamente!\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create new membership",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 Created\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Response body contains a valid membership object\", function () {",
+							"    // 1. Parsear la respuesta JSON",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    // 2. Verificar que la respuesta es un objeto y tiene una propiedad 'id'",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.id).to.exist; ",
+							"    pm.expect(responseData.id).to.not.be.empty;",
+							"",
+							"    // 3. Si todo está bien, guardar el id en la variable de entorno",
+							"    let createdMembershipId = responseData.id;",
+							"    pm.environment.set(\"createdMembershipId\", createdMembershipId);",
+							"    ",
+							"    ",
+							"    console.log(\"Se guardó el ID de la membresía:\", createdMembershipId);",
+							"    console.log(\"prueba:\")",
+							"    pm.environment.set(\"test_variable\", \"hola mundo\");",
+							"});",
+							"",
+							"pm.test(\"Status code is 409 Conflict for duplicate name\", function () {",
+							"    pm.response.to.have.status(409);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Bitcoin 6\",\n    \"cost\": 50,\n    \"max_classes_assistance\": 30,\n    \"max_gym_assistance\": 30,\n    \"duration_months\": 12\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}",
+					"host": [
+						"{{baseUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAllMemberships",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is an array of memberships\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}",
+					"host": [
+						"{{baseUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getMembershipById",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains the correct membership\", function () {",
+							"    const responseData = pm.response.json();",
+							"    const expectedId = pm.environment.get(\"createdMembershipId\");",
+							"    pm.expect(responseData.id).to.eql(expectedId);",
+							"    pm.expect(responseData.name).to.eql(\"Membresía Oro Élite\"); // O el nombre que esperas",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/{{createdMembershipId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"{{createdMembershipId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateMembership",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Membership was updated correctly\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData.name).to.eql(\"Membresía Oro Élite (Actualizada)\");",
+							"    pm.expect(responseData.cost).to.eql(55);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"nombre original\",\n    \"cost\": 101\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/{{createdMembershipId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"{{createdMembershipId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "toggleMembershipStatus",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Membership status was toggled to false\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData.status).to.be.false;",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/{{createdMembershipId}}/toggle-status",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"{{createdMembershipId}}",
+						"toggle-status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteMembership",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204 No Content\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/{{createdMembershipId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"{{createdMembershipId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteMembership Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404 Not Found\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/non-existent-id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"non-existent-id"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
