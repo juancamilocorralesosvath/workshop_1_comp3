@@ -3,22 +3,23 @@ import { z } from 'zod';
 import { ResponseHelper } from '../utils/response';
 
 export const registerSchema = z.object({
-  email: z.email('Invalid email format'),
+  email: z.string().email('Invalid email format'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   full_name: z.string().min(2, 'Full name must be at least 2 characters'),
-  age: z.string().min(1, 'Age is required'),
-  phone: z.string().min(10, 'Phone must be at least 10 characters').max(15, 'Phone must be at most 15 characters'),
+  age: z.number().int().min(1, 'Age must be a positive number').max(120, 'Age must be realistic'),
+  phone: z.string().min(5, 'Phone must be at least 5 characters'),
+  roleIds: z.array(z.string()).optional()
 });
 
 export const loginSchema = z.object({
-  email: z.email('Invalid email format'),
+  email: z.string().email('Invalid email format'),
   password: z.string().min(1, 'Password is required'),
 });
 
 export const updateUserSchema = z.object({
-  email: z.email('Invalid email format').optional(),
+  email: z.string().email('Invalid email format').optional(),
   full_name: z.string().min(2, 'Full name must be at least 2 characters').optional(),
-  age: z.string().min(1, 'Age is required').optional(),
+  age: z.number().int().min(1, 'Age must be a positive number').max(120, 'Age must be realistic').optional(),
   phone: z.string().min(10, 'Phone must be at least 10 characters').optional(),
   isActive: z.boolean().optional(),
 });
@@ -40,11 +41,17 @@ export const createPermissionSchema = z.object({
 export const validate = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log('Validating body:', req.body);
       schema.parse(req.body);
       next();
     } catch (error) {
-      
-      return ResponseHelper.error(res, 'Validation failed: ', 400);
+      console.log('Validation error:', error);
+      if (error instanceof z.ZodError) {
+        const errorMessages = error.issues.map((err: any) => `${err.path.join('.')}: ${err.message}`);
+        console.log('Error messages:', errorMessages);
+        return ResponseHelper.validationError(res, errorMessages);
+      }
+      return ResponseHelper.error(res, 'Validation failed', 400);
     }
   };
 };

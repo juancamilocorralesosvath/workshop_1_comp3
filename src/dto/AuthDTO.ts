@@ -3,8 +3,9 @@ export class UserRegistrationDTO {
     public readonly email: string,
     public readonly password: string,
     public readonly full_name: string,
-    public readonly age: string,
-    public readonly phone: string
+    public readonly age: number,
+    public readonly phone: string,
+    public readonly roleIds?: string[]
   ) {}
 
   static fromRequest(body: any): UserRegistrationDTO {
@@ -13,7 +14,8 @@ export class UserRegistrationDTO {
       body.password,
       body.full_name,
       body.age,
-      body.phone
+      body.phone,
+      body.roleIds
     );
   }
 }
@@ -40,7 +42,7 @@ export class AuthResponseDTO {
 export class UserProfileUpdateDTO {
   constructor(
     public readonly fullName?: string,
-    public readonly age?: string,
+    public readonly age?: number,
     public readonly phone?: string
   ) {}
 

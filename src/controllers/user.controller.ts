@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { ResponseHelper } from '../utils/response';
 import { SUCCESS_MESSAGES } from '../utils/successMessages';
 import { userService } from '../services/userService';
 import { IUserService } from '../interfaces/IUserService';
@@ -10,7 +9,8 @@ export class UserController {
   getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const paginatedUsers = await userService.findAll();
-      return ResponseHelper.success(res, paginatedUsers, SUCCESS_MESSAGES.USERS_RETRIEVED);
+      return res.status(200).json(paginatedUsers)
+      
     } catch (error) {
       next(error);
     }
@@ -20,7 +20,7 @@ export class UserController {
     try {
       const userIdentifier = UserIdDTO.fromParams(req.params);
       const userFound = await userService.findUserById(userIdentifier.userId);
-      return ResponseHelper.success(res, userFound, SUCCESS_MESSAGES.USER_RETRIEVED);
+      return res.status(200).json(userFound)
     } catch (error) {
       next(error);
     }
@@ -30,7 +30,7 @@ export class UserController {
     try {
       const newUserData = CreateUserDTO.fromRequest(req.body);
       const createdUser = await userService.createNewUser(newUserData);
-      return ResponseHelper.success(res, createdUser, SUCCESS_MESSAGES.USER_CREATED, 201);
+      return res.status(201).json(createdUser);
     } catch (error) {
       next(error);
     }
@@ -41,7 +41,7 @@ export class UserController {
       const userIdentifier = UserIdDTO.fromParams(req.params);
       const updateData = UpdateUserDTO.fromRequest(req.body);
       const updatedUser = await userService.updateExistingUser(userIdentifier.userId, updateData);
-      return ResponseHelper.success(res, updatedUser, SUCCESS_MESSAGES.USER_UPDATED);
+      return res.status(200).json(updatedUser);
     } catch (error) {
       next(error);
     }
@@ -51,7 +51,7 @@ export class UserController {
     try {
       const userIdentifier = UserIdDTO.fromParams(req.params);
       await userService.removeUser(userIdentifier.userId);
-      return ResponseHelper.success(res, null, SUCCESS_MESSAGES.USER_DELETED);
+      return res.status(204).end();
     } catch (error) {
       next(error);
     }
@@ -64,7 +64,7 @@ export class UserController {
         roleAssignmentData.userId,
         roleAssignmentData.roleIds
       );
-      return ResponseHelper.success(res, updatedUser, SUCCESS_MESSAGES.ROLES_ASSIGNED);
+      return res.status(200).json(updatedUser)
     } catch (error) {
       next(error);
     }
@@ -77,7 +77,8 @@ export class UserController {
       const statusMessage = updatedUser.isActive
         ? SUCCESS_MESSAGES.USER_ACTIVATED
         : SUCCESS_MESSAGES.USER_DEACTIVATED;
-      return ResponseHelper.success(res, updatedUser, statusMessage);
+      
+      return res.status(200).json(updatedUser)
     } catch (error) {
       next(error);
     }

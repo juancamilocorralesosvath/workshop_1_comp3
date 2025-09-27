@@ -122,7 +122,7 @@ class UserService implements IUserService {
       id: userId,
       email: userData.email,
       password: userData.password,
-      fulll_name: userData.full_name,
+      full_name: userData.full_name,
       age: userData.age,
       phone: userData.phone,
       rol: roleIds
@@ -148,7 +148,7 @@ class UserService implements IUserService {
 
   private applyUpdatesToUser(user: any, updateData: IUpdateUserData): void {
     if (updateData.email) user.email = updateData.email;
-    if (updateData.fulll_name) user.fulll_name = updateData.fulll_name;
+    if (updateData.full_name) user.full_name = updateData.full_name;
     if (updateData.age) user.age = updateData.age;
     if (updateData.phone) user.phone = updateData.phone;
     if (updateData.isActive !== undefined) user.isActive = updateData.isActive;

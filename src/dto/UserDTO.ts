@@ -4,7 +4,7 @@ export class CreateUserDTO {
     public readonly email: string,
     public readonly password: string,
     public readonly full_name: string,
-    public readonly age: string,
+    public readonly age: number,
     public readonly phone: string,
     public readonly roleIds?: string[]
   ) {}
@@ -13,7 +13,7 @@ export class CreateUserDTO {
     return new CreateUserDTO(
       body.email,
       body.password,
-      body.fulll_name,
+      body.full_name,
       body.age,
       body.phone,
       body.roleIds
@@ -24,8 +24,8 @@ export class CreateUserDTO {
 export class UpdateUserDTO {
   constructor(
     public readonly email?: string,
-    public readonly fullName?: string,
-    public readonly age?: string,
+    public readonly full_name?: string,
+    public readonly age?: number,
     public readonly phone?: string,
     public readonly isActive?: boolean
   ) {}
@@ -33,7 +33,7 @@ export class UpdateUserDTO {
   static fromRequest(body: any): UpdateUserDTO {
     return new UpdateUserDTO(
       body.email,
-      body.fulll_name,
+      body.full_name,
       body.age,
       body.phone,
       body.isActive

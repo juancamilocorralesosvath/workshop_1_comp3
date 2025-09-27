@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { ResponseHelper } from '../utils/response';
 import { SUCCESS_MESSAGES } from '../utils/successMessages';
 import { authService } from '../services/authService';
 import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO, UserProfileUpdateDTO, PasswordChangeDTO } from '../dto/AuthDTO';
@@ -9,7 +8,7 @@ import { verifyToken } from '../utils/jwt';
 
 
 export class AuthController {
-  
+
 
   registerNewUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -28,8 +27,8 @@ export class AuthController {
       );
 
       const authResponse = new AuthResponseDTO(userWithoutPassword, authTokens.accessToken, authTokens.refreshToken);
+      return res.status(200).json(authResponse)
 
-      return ResponseHelper.success(res, authResponse, SUCCESS_MESSAGES.USER_REGISTERED, 201);
     } catch (error) {
       next(error);
     }
@@ -53,43 +52,17 @@ export class AuthController {
 
       const authResponse = new AuthResponseDTO(userWithoutPassword, authTokens.accessToken, authTokens.refreshToken);
 
-      return ResponseHelper.success(res, authResponse, SUCCESS_MESSAGES.LOGIN_SUCCESSFUL);
+      return res.status(200).json(authResponse);
     } catch (error) {
       next(error);
     }
   };
 
-  refreshToken = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { refreshToken } = req.body;
 
-      if (!refreshToken) {
-        return ResponseHelper.unauthorized(res, 'Refresh token is required');
-      }
-
-      const decoded = verifyToken(refreshToken);
-
-      const user = await User.findOne({ id: decoded.userId }).populate('rol', 'name');
-      if (!user || !user.isActive) {
-        return ResponseHelper.unauthorized(res, 'User not found or deactivated');
-      }
-
-      const roleNames = authService.extractRoleNames(user);
-
-      const authTokens = authService.generateAuthTokens(user.id, user.email, roleNames);
-
-      return ResponseHelper.success(res, {
-        token: authTokens.accessToken,
-        refreshToken: authTokens.refreshToken
-      }, SUCCESS_MESSAGES.TOKEN_REFRESHED);
-    } catch (error) {
-      return ResponseHelper.unauthorized(res, 'Invalid refresh token');
-    }
-  };
 
   logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      return ResponseHelper.success(res, null, SUCCESS_MESSAGES.LOGOUT_SUCCESSFUL);
+      return res.sendStatus(200);
     } catch (error) {
       next(error);
     }
@@ -98,11 +71,12 @@ export class AuthController {
   getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
-        return ResponseHelper.unauthorized(res, 'Authentication required');
+        return res.status(401).json({ message: 'Unauthorized' });
       }
 
       const user = await authService.getUserWithoutPassword(req.user.userId);
-      return ResponseHelper.success(res, user, SUCCESS_MESSAGES.PROFILE_RETRIEVED);
+      return res.status(200).json(user);
+
     } catch (error) {
       next(error);
     }
@@ -111,14 +85,17 @@ export class AuthController {
   updateProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
-        return ResponseHelper.unauthorized(res, 'Authentication required');
+        return res.status(401).json({ message: 'Unauthorized' });
+
+
       }
 
       const profileUpdateData = UserProfileUpdateDTO.fromRequest(req.body);
 
       const user = await User.findOne({ id: req.user.userId });
       if (!user) {
-        return ResponseHelper.notFound(res, 'User not found');
+        return res.status(404).json({ message: 'Not Found' });
+
       }
 
       if (profileUpdateData.fullName) user.full_name = profileUpdateData.fullName;
@@ -129,7 +106,8 @@ export class AuthController {
 
       const updatedUser = await authService.getUserWithoutPassword(user.id);
 
-      return ResponseHelper.success(res, updatedUser, SUCCESS_MESSAGES.PROFILE_UPDATED);
+
+      return res.status(200).json(updatedUser);
     } catch (error) {
       next(error);
     }
@@ -138,31 +116,35 @@ export class AuthController {
   changePassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
-        return ResponseHelper.unauthorized(res, 'Authentication required');
+        return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
       }
 
       const passwordChangeData = PasswordChangeDTO.fromRequest(req.body);
 
       if (passwordChangeData.newPassword.length < 6) {
-        return ResponseHelper.error(res, 'New password must be at least 6 characters', 400);
+        return res.status(400).json({ message: 'New password must be at least 6 characters long' });
       }
 
-      const user = await User.findOne({ id: req.user.userId });
+      const user = await User.findOne({ _id: req.user.userId }); 
       if (!user) {
-        return ResponseHelper.notFound(res, 'User not found');
+        return res.status(404).json({ message: 'User not found' });
       }
 
       const isCurrentPasswordValid = await user.comparePassword(passwordChangeData.currentPassword);
       if (!isCurrentPasswordValid) {
-        return ResponseHelper.unauthorized(res, 'Current password is incorrect');
+        return res.status(401).json({ message: 'Current password is incorrect' });
       }
 
+      
       user.password = passwordChangeData.newPassword;
       await user.save();
 
-      return ResponseHelper.success(res, null, SUCCESS_MESSAGES.PASSWORD_CHANGED);
+      return res.status(200).json({ message: 'Password successfully updated' });
     } catch (error) {
       next(error);
     }
   };
+
+
+
 }

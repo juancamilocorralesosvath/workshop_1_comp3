@@ -9,15 +9,15 @@ export interface ICreateUserData {
   email: string;
   password: string;
   full_name: string;
-  age: string;
+  age: number;
   phone: string;
   roleIds?: string[];
 }
 
 export interface IUpdateUserData {
   email?: string;
-  fulll_name?: string;
-  age?: string;
+  full_name?: string;
+  age?: number;
   phone?: string;
   isActive?: boolean;
 }

@@ -2,7 +2,7 @@ export interface IUserRegistration {
   email: string;
   password: string;
   full_name: string;
-  age: string;
+  age: number;
   phone: string;
 }
 

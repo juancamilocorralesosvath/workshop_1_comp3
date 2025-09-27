@@ -6,7 +6,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   full_name: string;
-  age: string;
+  age: number;
   phone: string;
   rol: string[];
   isActive: boolean;
@@ -37,8 +37,10 @@ const userSchema = new Schema<IUser>({
     trim: true
   },
   age: {
-    type: String,
-    required: true
+    type: Number,
+    required: true,
+    min: 1,
+    max: 120
   },
   phone: {
     type: String,
