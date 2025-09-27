@@ -33,14 +33,20 @@ class UserService implements IUserService {
   }
 
   async createNewUser(userData: ICreateUserData): Promise<any> {
+    console.log('🔍 Creating user with data:', { email: userData.email, roleIds: userData.roleIds });
+
     await this.validateEmailIsUnique(userData.email);
 
     const assignedRoles = await this.getAssignedRoles(userData.roleIds);
+    console.log('📝 Assigned roles:', assignedRoles);
+
     const uniqueUserId = generateUserId();
+    console.log('🆔 Generated user ID:', uniqueUserId);
 
     const newUser = await this.buildAndSaveUser(userData, uniqueUserId, assignedRoles);
+    console.log('✅ User saved with _id:', newUser._id);
 
-    return await this.getUserWithRolesById(newUser.id);
+    return await this.getUserWithRolesById(newUser._id);
   }
 
   async updateExistingUser(userId: string, updateData: IUpdateUserData): Promise<any> {
@@ -53,7 +59,7 @@ class UserService implements IUserService {
     this.applyUpdatesToUser(existingUser, updateData);
     await existingUser.save();
 
-    return await this.getUserWithRolesById(existingUser.id);
+    return await this.getUserWithRolesById(existingUser._id);
   }
 
   async removeUser(userId: string): Promise<void> {
@@ -63,12 +69,12 @@ class UserService implements IUserService {
 
   async assignRolesToUser(userId: string, roleIds: string[]): Promise<any> {
     const userToUpdate = await this.findUserEntityById(userId);
-    await this.validateRolesExist(roleIds);
+    const validatedRoleObjectIds = await this.validateRolesExist(roleIds);
 
-    userToUpdate.rol = roleIds;
+    userToUpdate.rol = validatedRoleObjectIds;
     await userToUpdate.save();
 
-    return await this.getUserWithRolesById(userToUpdate.id);
+    return await this.getUserWithRolesById(userToUpdate._id);
   }
 
   async toggleUserActiveStatus(userId: string): Promise<any> {
@@ -77,7 +83,7 @@ class UserService implements IUserService {
     userToToggle.isActive = !userToToggle.isActive;
     await userToToggle.save();
 
-    return await this.getUserWithRolesById(userToToggle.id);
+    return await this.getUserWithRolesById(userToToggle._id);
   }
 
   private async validateEmailIsUnique(email: string): Promise<void> {
@@ -135,9 +141,12 @@ class UserService implements IUserService {
   }
 
   private async getUserWithRolesById(objectId: string) {
-    return await User.findById(objectId)
+    console.log('🔍 Looking for user with _id:', objectId);
+    const user = await User.findById(objectId)
       .populate('rol', 'name')
       .select('-password');
+    console.log('👤 Found user:', user ? 'YES' : 'NO');
+    return user;
   }
 
   private applyUpdatesToUser(user: any, updateData: IUpdateUserData): void {
