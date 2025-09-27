@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/jwt';
 import { JWTRequest } from '../interfaces/Jwt-Request.interface';
-import { ResponseHelper } from '../utils/response';
 import { User } from '../models/User';
 import { Role } from '../models/Role';
 
@@ -18,13 +17,19 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      return ResponseHelper.unauthorized(res, 'No authorization header provided');
+      return res.status(401).json({
+        success: false,
+        message: 'No authorization header provided',
+      });
     }
 
     const token = authHeader.split(' ')[1];
 
     if (!token) {
-      return ResponseHelper.unauthorized(res, 'No token provided');
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided',
+      });
     }
 
     const decoded = verifyToken(token);
@@ -32,7 +37,10 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
     next();
   } catch (error) {
-    return ResponseHelper.unauthorized(res, 'Invalid or expired token');
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid or expired token',
+    });
   }
 };
 
@@ -40,13 +48,19 @@ export const authorize = (requiredRoles: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
-        return ResponseHelper.unauthorized(res, 'Authentication required');
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required',
+        });
       }
 
       const user = await User.findOne({ id: req.user.userId }).populate('rol');
 
       if (!user) {
-        return ResponseHelper.unauthorized(res, 'User not found');
+        return res.status(401).json({
+          success: false,
+          message: 'User not found',
+        });
       }
 
       const userRoles = await Role.find({ _id: { $in: user.rol } });
@@ -55,12 +69,18 @@ export const authorize = (requiredRoles: string[]) => {
       const hasRequiredRole = requiredRoles.some(role => userRoleNames.includes(role));
 
       if (!hasRequiredRole) {
-        return ResponseHelper.forbidden(res, `Access denied. Required roles: ${requiredRoles.join(', ')}`);
+        return res.status(403).json({
+          success: false,
+          message: `Access denied. Required roles: ${requiredRoles.join(', ')}`,
+        });
       }
 
       next();
     } catch (error) {
-      return ResponseHelper.error(res, 'Authorization error', 500);
+      return res.status(500).json({
+        success: false,
+        message: 'Authorization error',
+      });
     }
   };
 };

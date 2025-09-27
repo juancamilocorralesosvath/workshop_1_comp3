@@ -18,7 +18,7 @@ export class AuthController {
 
       const { user: createdUser, role: assignedRole } = await authService.createUserWithClientRole(registrationData);
 
-      const userWithoutPassword = await authService.getUserWithoutPassword(createdUser._id);
+      const userWithoutPassword = await authService.getUserWithoutPassword(createdUser.id);
 
       const authTokens = authService.generateAuthTokens(
         createdUser.id,

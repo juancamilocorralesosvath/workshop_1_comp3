@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
-import { ResponseHelper } from '../utils/response';
 
 export const registerSchema = z.object({
   email: z.string().email('Invalid email format'),
@@ -49,9 +48,16 @@ export const validate = (schema: z.ZodSchema) => {
       if (error instanceof z.ZodError) {
         const errorMessages = error.issues.map((err: any) => `${err.path.join('.')}: ${err.message}`);
         console.log('Error messages:', errorMessages);
-        return ResponseHelper.validationError(res, errorMessages);
+        return res.status(400).json({
+          success: false,
+          message: 'Validation failed',
+          errors: errorMessages,
+        });
       }
-      return ResponseHelper.error(res, 'Validation failed', 400);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+      });
     }
   };
 };
