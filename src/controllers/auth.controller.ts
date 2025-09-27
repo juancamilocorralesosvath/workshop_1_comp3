@@ -93,9 +93,17 @@ export class AuthController {
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
+      console.log('🔍 Getting profile for userId:', req.user.userId);
       const user = await authService.getUserWithoutPassword(req.user.userId);
+      console.log('👤 Found user:', user ? 'YES' : 'NO');
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
       return res.status(200).json(user);
     } catch (error: any) {
+      console.error('❌ Error in getProfile:', error);
       return res.status(500).json({ message: 'Error retrieving profile', error: error.message });
     }
   };
@@ -106,14 +114,15 @@ export class AuthController {
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
-      // Verificar que solo el usuario pueda actualizar su propio perfil
-      if (req.user.userId !== req.params.id && req.params.id !== 'me') {
-        return res.status(403).json({ message: 'No puedes actualizar otro perfil' });
-      }
+      // En PUT /auth/profile, el usuario siempre actualiza su propio perfil
+      // No necesitamos verificación adicional ya que el token ya lo identifica
 
       const profileUpdateData = req.body as UserProfileUpdateData;
 
+      console.log('🔍 Updating profile for userId:', req.user.userId);
       const user = await User.findOne({ id: req.user.userId });
+      console.log('👤 Found user for update:', user ? 'YES' : 'NO');
+
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }

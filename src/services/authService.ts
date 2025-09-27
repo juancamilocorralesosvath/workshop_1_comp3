@@ -45,7 +45,7 @@ class AuthService implements IAuthService {
   }
 
   async getUserWithoutPassword(userId: string): Promise<any> {
-    return await User.findById(userId)
+    return await User.findOne({ id: userId })
       .populate('rol', 'name')
       .select('-password');
   }
