@@ -18,11 +18,13 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
     token = token.replace('Bearer ', '');
     const decoded = verifyToken(token);
+    console.log('🔑 Token decoded:', { userId: decoded.userId, email: decoded.email, roles: decoded.roles });
     //obtenemos el user del token
-    req.user = decoded; 
+    req.user = decoded;
 
     next();
   } catch (error) {
+    console.error('❌ Token verification failed:', error);
     return res.status(403).json({ message: 'Invalid or expired token' });
   }
 };
