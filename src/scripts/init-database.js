@@ -4,10 +4,12 @@
 import { MongoClient } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
+import { nanoid } from 'nanoid';
 
 dotenv.config();
 
-const CLOUD_MONGO_URI = 'mongodb+srv://admin_user:35N2qci42thwJ3VB@cluster0.hiuxs5q.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+// const CLOUD_MONGO_URI = 'mongodb+srv://admin_user:35N2qci42thwJ3VB@cluster0.hiuxs5q.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const CLOUD_MONGO_URI = 'empty'
 const MONGODB_URI = process.env.MONGO_URI || CLOUD_MONGO_URI;
 const DATABASE_NAME = 'workshop';
 
@@ -135,12 +137,53 @@ async function initializeDatabase() {
     const userResult = await db.collection('users').insertMany(users);
     console.log('✅ Users created:', Object.keys(userResult.insertedIds).length);
 
+
+
+    // 4. crear membresias de prueba
+  const generateMembershipId = () => {
+  return `membership_${nanoid(10)}`;
+};
+    
+const memberships = [
+  {
+    id: generateMembershipId(), // ID único generado
+    name: "Bronce Flex", // Un plan básico y flexible
+    cost: 35, // Costo mensual ajustado
+    status: true, // Activa
+    max_classes_assistance: 6, // 6 clases al mes
+    max_gym_assistance: 20, // 20 accesos al gimnasio al mes
+    duration_months: 1 // Duración de 1 mes
+  },
+  {
+    id: generateMembershipId(), // ID único generado
+    name: "Silver Plus", // Un plan intermedio con más beneficios
+    cost: 50, // Costo mensual
+    status: true, // Activa
+    max_classes_assistance: 12, // 12 clases al mes
+    max_gym_assistance: 30, // Acceso ilimitado al gimnasio (considerando 30 días)
+    duration_months: 1 // Duración de 1 mes
+  },
+  {
+    id: generateMembershipId(), // ID único generado
+    name: "Gold Elite", // El plan más completo y anual
+    cost: 550, // Costo anual con descuento (aprox. 45.83/mes)
+    status: true, // Activa
+    max_classes_assistance: 30, // Acceso prácticamente ilimitado a clases
+    max_gym_assistance: 30, // Acceso ilimitado al gimnasio
+    duration_months: 12 // Duración de 12 meses (1 año)
+  }
+];
+
+    const membershipsResults = await db.collection('memberships').insertMany(memberships);
+    console.log('✅ memberships created:', Object.keys(membershipsResults.insertedIds).length);
+
     console.log('\n🎉 Database initialized successfully!');
     console.log('\n📋 Test credentials:');
     console.log('Admin: admin@test.com / admin123');
     console.log('Recepcionista: recepcionista@test.com / recep123');
     console.log('Coach: coach@test.com / coach123');
     console.log('Cliente: cliente@test.com / cliente123');
+
 
   } catch (error) {
     console.error('❌ Error initializing database:', error);

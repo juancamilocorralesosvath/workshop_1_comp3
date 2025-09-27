@@ -80,6 +80,7 @@ class MembershipService implements IMembershipService {
       max_gym_assistance: membershipData.max_gym_assistance,
       duration_months: membershipData.duration_months
     });
+    
 
     await newMembership.save();
     return newMembership;
