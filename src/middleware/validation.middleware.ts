@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
 export const registerSchema = z.object({
-  email: z.string().email('Invalid email format'),
+  email: z.email('Invalid email format'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   full_name: z.string().min(2, 'Full name must be at least 2 characters'),
   age: z.number().int().min(1, 'Age must be a positive number').max(120, 'Age must be realistic'),
@@ -11,12 +11,12 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
+  email: z.email('Invalid email format'),
   password: z.string().min(1, 'Password is required'),
 });
 
 export const updateUserSchema = z.object({
-  email: z.string().email('Invalid email format').optional(),
+  email: z.email('Invalid email format').optional(),
   full_name: z.string().min(2, 'Full name must be at least 2 characters').optional(),
   age: z.number().int().min(1, 'Age must be a positive number').max(120, 'Age must be realistic').optional(),
   phone: z.string().min(10, 'Phone must be at least 10 characters').optional(),
