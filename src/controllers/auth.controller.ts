@@ -1,16 +1,22 @@
 import { Request, Response } from 'express';
 import { SUCCESS_MESSAGES } from '../utils/successMessages';
 import { authService } from '../services/authService';
-import { UserRegistrationDTO, UserCredentialsDTO, AuthResponseDTO, UserProfileUpdateDTO, PasswordChangeDTO } from '../dto/AuthDTO';
 import { User } from '../models/User';
-import { verifyToken } from '../services/jwtService';
 import { ERROR_MESSAGES } from '../utils/errorMessages';
+import { UserIdParams } from '../dto/UserDTO';
+import { 
+  UserRegistrationData, 
+  UserCredentialsData, 
+  UserProfileUpdateData, 
+  PasswordChangeData, 
+  AuthResponse 
+} from '../dto/AuthDTO';
 
 export class AuthController {
 
   registerNewUser = async (req: Request, res: Response) => {
     try {
-      const registrationData = UserRegistrationDTO.fromRequest(req.body);
+      const registrationData = req.body as UserRegistrationData;
 
       await authService.validateEmailNotExists(registrationData.email);
 
@@ -24,7 +30,12 @@ export class AuthController {
         [assignedRole.name]
       );
 
-      const authResponse = new AuthResponseDTO(userWithoutPassword, authTokens.accessToken, authTokens.refreshToken);
+      const authResponse: AuthResponse = {
+        user: userWithoutPassword,
+        accessToken: authTokens.accessToken,
+        refreshToken: authTokens.refreshToken
+      };
+
       return res.status(200).json(authResponse);
     } catch (error: any) {
       if (error.message === ERROR_MESSAGES.EMAIL_ALREADY_EXISTS) {
@@ -36,7 +47,7 @@ export class AuthController {
 
   authenticateUser = async (req: Request, res: Response) => {
     try {
-      const credentials = UserCredentialsDTO.fromRequest(req.body);
+      const credentials = req.body as UserCredentialsData;
 
       const authenticatedUser = await authService.validateUserCredentials(credentials.email, credentials.password);
 
@@ -50,7 +61,11 @@ export class AuthController {
 
       const userWithoutPassword = authService.removePasswordFromUserObject(authenticatedUser);
 
-      const authResponse = new AuthResponseDTO(userWithoutPassword, authTokens.accessToken, authTokens.refreshToken);
+      const authResponse: AuthResponse = {
+        user: userWithoutPassword,
+        accessToken: authTokens.accessToken,
+        refreshToken: authTokens.refreshToken
+      };
 
       return res.status(200).json(authResponse);
     } catch (error: any) {
@@ -96,14 +111,14 @@ export class AuthController {
         return res.status(403).json({ message: 'No puedes actualizar otro perfil' });
       }
 
-      const profileUpdateData = UserProfileUpdateDTO.fromRequest(req.body);
+      const profileUpdateData = req.body as UserProfileUpdateData;
 
       const user = await User.findOne({ id: req.user.userId });
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      if (profileUpdateData.fullName) user.full_name = profileUpdateData.fullName;
+      if (profileUpdateData.full_name) user.full_name = profileUpdateData.full_name;
       if (profileUpdateData.age) user.age = profileUpdateData.age;
       if (profileUpdateData.phone) user.phone = profileUpdateData.phone;
 
@@ -126,7 +141,7 @@ export class AuthController {
         return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
       }
 
-      const passwordChangeData = PasswordChangeDTO.fromRequest(req.body);
+      const passwordChangeData = req.body as PasswordChangeData;
 
       if (passwordChangeData.newPassword.length < 6) {
         return res.status(400).json({ message: 'New password must be at least 6 characters long' });
