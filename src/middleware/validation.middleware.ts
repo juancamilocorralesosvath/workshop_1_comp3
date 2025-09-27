@@ -61,6 +61,15 @@ export const updateMembershipSchema = z.object({
   status: z.boolean().optional(),
 });
 
+export const createSubscriptionSchema = z.object({
+  userId: z.string().min(1, 'El ID del usuario es requerido.'),
+});
+
+
+export const addMembershipToSubscriptionSchema = z.object({
+  membershipId: z.string().min(1, 'El ID de la membresía es requerido.'),
+});
+
 export const validate = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {

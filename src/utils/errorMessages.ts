@@ -40,5 +40,14 @@ export const ERROR_MESSAGES = {
 
  
   INTERNAL_SERVER_ERROR: 'Error interno del servidor',
-  SERVICE_UNAVAILABLE: 'Servicio no disponible'
+  SERVICE_UNAVAILABLE: 'Servicio no disponible',
+
+ 
+  SUBSCRIPTION_NOT_FOUND: 'No se encontró el historial de suscripciones.',
+  SUBSCRIPTION_ALREADY_EXISTS: 'Ya existe un historial de suscripciones para este usuario.',
+
+
+  UNAUTHORIZED: 'No autorizado. Se requiere un token de autenticación válido.',
+  FORBIDDEN: 'Acceso denegado. No tienes los permisos necesarios.',
+  VALIDATION_ERROR: 'Error de validación. Por favor, revisa los datos enviados.',
 } as const;

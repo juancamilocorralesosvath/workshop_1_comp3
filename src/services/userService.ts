@@ -8,6 +8,7 @@ import {
   ICreateUserData,
   IUpdateUserData,
 } from '../interfaces/IUserService';
+import { subscriptionService } from './subscriptionService';
 
 class UserService implements IUserService {
  
@@ -45,6 +46,18 @@ class UserService implements IUserService {
 
     const newUser = await this.buildAndSaveUser(userData, uniqueUserId, assignedRoles);
     console.log('✅ User saved with _id:', newUser._id);
+
+    try {
+      await subscriptionService.createSubscriptionForUser({ userId: uniqueUserId });
+      console.log('✅ Subscription history created successfully.');
+    } catch (error) {
+      console.log("🚀 ~ UserService ~ createNewUser ~ error:", error)
+      console.error(`❌ FAILED to create subscription for user ${uniqueUserId}. Rolling back user creation.`);
+    await User.findByIdAndDelete(newUser._id);
+    
+   
+    throw error;
+    }
 
     return await this.getUserWithRolesById(newUser._id);
   }
