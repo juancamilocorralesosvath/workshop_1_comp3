@@ -1,3 +1,7 @@
+import { Document } from 'mongoose';
+import { User } from '../models/User';
+
+
 export interface IUserFilters {
   search?: string;
   isActive?: boolean;
@@ -23,12 +27,25 @@ export interface IUpdateUserData {
 }
 
 
-export interface IUserService {
+export interface IUserResponse {
+  id: string;
+  email: string;
+  full_name: string;
+  age: number;
+  phone: string;
+  isActive: boolean;
+  rol: any;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-  findUserById(userId: string): Promise<any>;
-  createNewUser(userData: ICreateUserData): Promise<any>;
-  updateExistingUser(userId: string, updateData: IUpdateUserData): Promise<any>;
+
+export interface IUserService {
+  findUserById(userId: string): Promise<InstanceType<typeof User> & Document>;
+  createNewUser(userData: ICreateUserData): Promise<InstanceType<typeof User> & Document>;
+  updateExistingUser(userId: string, updateData: IUpdateUserData): Promise<InstanceType<typeof User> & Document>;
   removeUser(userId: string): Promise<void>;
-  assignRolesToUser(userId: string, roleIds: string[]): Promise<any>;
-  toggleUserActiveStatus(userId: string): Promise<any>;
+  assignRolesToUser(userId: string, roleIds: string[]): Promise<InstanceType<typeof User> & Document>;
+  toggleUserActiveStatus(userId: string): Promise<InstanceType<typeof User> & Document>;
+  findAll(): Promise<Array<InstanceType<typeof User> & Document>>;
 }
