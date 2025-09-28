@@ -71,5 +71,3 @@ export class SubscriptionController {
     }
   };
 }
-
-export const subscriptionController = new SubscriptionController();

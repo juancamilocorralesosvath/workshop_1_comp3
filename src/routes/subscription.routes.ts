@@ -7,7 +7,7 @@ export const subscriptionRouter = Router();
 const subscriptionController = new SubscriptionController();
 
 subscriptionRouter.get(
-  '/user/:userId',
+  '/users/:userId',
   authenticate,
   authorizeRolesOrOwner(['admin', 'recepcionista']), 
   subscriptionController.getSubscriptionByUserId
