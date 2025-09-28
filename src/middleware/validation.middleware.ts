@@ -61,6 +61,32 @@ export const updateMembershipSchema = z.object({
   status: z.boolean().optional(),
 });
 
+export const createSubscriptionSchema = z.object({
+  userId: z.string().min(1, 'El ID del usuario es requerido.'),
+});
+
+
+export const addMembershipToSubscriptionSchema = z.object({
+  membershipId: z.string().min(1, 'El ID de la membresía es requerido.'),
+});
+
+export const checkInSchema = z.object({
+  type: z.enum(['gym', 'class'], {
+    errorMap: () => ({ message: 'Type must be either "gym" or "class"' })
+  })
+});
+
+export const checkOutSchema = z.object({
+}).optional();
+
+export const attendanceHistoryQuerySchema = z.object({
+  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'From date must be in YYYY-MM-DD format').optional(),
+  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'To date must be in YYYY-MM-DD format').optional(),
+  type: z.enum(['gym', 'class'], {
+    errorMap: () => ({ message: 'Type must be either "gym" or "class"' })
+  }).optional()
+});
+
 export const validate = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -81,6 +107,31 @@ export const validate = (schema: z.ZodSchema) => {
       return res.status(400).json({
         success: false,
         message: 'Validation failed',
+      });
+    }
+  };
+};
+
+export const validateQuery = (schema: z.ZodSchema) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log('Validating query:', req.query);
+      schema.parse(req.query);
+      next();
+    } catch (error) {
+      console.log('Query validation error:', error);
+      if (error instanceof z.ZodError) {
+        const errorMessages = error.issues.map((err: any) => `${err.path.join('.')}: ${err.message}`);
+        console.log('Error messages:', errorMessages);
+        return res.status(400).json({
+          success: false,
+          message: 'Query validation failed',
+          errors: errorMessages,
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: 'Query validation failed',
       });
     }
   };

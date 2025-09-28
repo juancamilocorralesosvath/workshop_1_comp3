@@ -42,3 +42,27 @@ export const authorize = (requiredRoles: string[]) => {
     next();
   };
 };
+
+export const authorizeRolesOrOwner = (requiredRoles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+    const { userId: resourceUserId } = req.params;
+
+    if (!user) {
+      return res.status(403).json({ message: 'Forbidden: User not authenticated.' });
+    }
+
+    const hasRequiredRole = requiredRoles.some(role => user.roles.includes(role));
+    if (hasRequiredRole) {
+      return next();
+    }
+
+    if (user.userId === resourceUserId) {
+      return next();
+    }
+
+    return res.status(403).json({
+      message: `Forbidden. You must be one of [${requiredRoles.join(', ')}] or the owner of this resource.`,
+    });
+  };
+};

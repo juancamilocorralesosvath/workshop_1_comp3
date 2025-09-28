@@ -15,3 +15,11 @@ export const generatePermissionId = (): string => {
 export const generateMembershipId = (): string => {
   return `membership_${nanoid(10)}`;
 };
+
+export const generateAttendanceId = (): string => {
+  return `attendance_${nanoid(10)}`;
+};
+
+export const generateSubscriptionId = (): string => {
+  return `subscription_${nanoid(10)}`;
+};

@@ -3,7 +3,7 @@
 ## 👥 Equipo de Desarrollo
 * Luis Manuel Rojas Correa
 * Santiago Angel Ordoñez
-* Cristian
+* Cristian Molina Vides
 * Juan Camilo Corrales Osvath
 
 ## 📋 Descripción del Proyecto
