@@ -102,12 +102,19 @@ class AttendanceService implements IAttendanceService {
   }
 
   async getActiveAttendances(): Promise<any[]> {
-    const activeAttendances = await Attendance.find({ is_active: true })
-      .populate('user_id', 'id full_name email')
-      .sort({ entrance_dateTime: -1 });
+  const activeAttendances = await Attendance.find({ is_active: true })
+    
+    .populate({
+      path: 'user_id',            
+      model: 'User',              
+      select: 'id full_name email', 
+      foreignField: 'id'          
+                                  
+    })
+    .sort({ entrance_dateTime: -1 });
 
-    return activeAttendances;
-  }
+  return activeAttendances;
+}
 
   async getUserAttendanceStats(userId: string): Promise<AttendanceStatsResponse> {
     await this.validateUserExists(userId);
@@ -178,8 +185,18 @@ class AttendanceService implements IAttendanceService {
   }
 
   private async calculateAvailableAttendances(userId: string) {
+    console.log("🚀 ~ AttendanceService ~ calculateAvailableAttendances ~ userId:", userId)
     try {
-      const subscription = await Subscription.findOne({ user_id: userId });
+
+      const user = await User.findOne({ id: userId });
+    if (!user) {
+      // Si el usuario no existe, no tiene asistencias disponibles
+      return { gym: 0, classes: 0 };
+    }
+
+    // 2. Ahora, usamos el user._id (que es un ObjectId) para buscar su historial
+    const subscription = await Subscription.findOne({ user_id: user._id });
+      
       if (!subscription || !subscription.memberships || subscription.memberships.length === 0) {
         return { gym: 0, classes: 0 };
       }

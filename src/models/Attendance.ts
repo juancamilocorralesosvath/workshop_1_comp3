@@ -2,6 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IAttendance extends Document {
   id: string;
+  // revisar si cambiar por IUser
   user_id: string;
   entrance_dateTime: Date;
   exit_dateTime?: Date;

@@ -9,15 +9,22 @@ import { generateSubscriptionId } from '../utils/generateId';
 class SubscriptionService implements ISubscriptionService {
   
   async findSubscriptionByUserId(userId: string): Promise<any> {
-   
-    const subscription = await Subscription.findOne({ user_id: userId })
-      .populate('user_id', 'id full_name email'); 
+  
+  const user = await User.findOne({ id: userId });
 
-    if (!subscription) {
-      throw new Error(ERROR_MESSAGES.SUBSCRIPTION_NOT_FOUND);
-    }
-    return subscription;
+  if (!user) {
+    throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
   }
+
+  const subscription = await Subscription.findOne({ user_id: user._id })
+    .populate('user_id', 'id full_name email'); 
+
+  if (!subscription) {
+    throw new Error(ERROR_MESSAGES.SUBSCRIPTION_NOT_FOUND);
+  }
+  
+  return subscription;
+}
 
   async createSubscriptionForUser(data: CreateSubscriptionInput): Promise<any> {
     const { userId } = data;

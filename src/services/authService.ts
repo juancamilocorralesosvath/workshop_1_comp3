@@ -5,6 +5,7 @@ import { generateUserId, generateRoleId } from '../utils/generateId';
 import { ERROR_MESSAGES } from '../utils/errorMessages';
 import { IAuthService, IUserRegistration, IAuthTokens, IUserWithRole } from '../interfaces/IAuthService';
 import bcrypt from 'bcryptjs';
+import { subscriptionService } from './subscriptionService';
 
 class AuthService implements IAuthService {
 
@@ -19,6 +20,17 @@ class AuthService implements IAuthService {
     const defaultClientRole = await this.findDefaultClientRole();
     const uniqueUserId = generateUserId();
     const newUser = await this.buildAndSaveUser(userData, uniqueUserId, defaultClientRole._id);
+
+    try {
+      await subscriptionService.createSubscriptionForUser({ userId: uniqueUserId });
+      console.log('✅ Subscription history created successfully.');
+    } catch (error) {
+      console.log("🚀 ~ UserService ~ createNewUser ~ error:", error)
+      console.error(`❌ FAILED to create subscription for user ${uniqueUserId}. Rolling back user creation.`);
+      await User.findByIdAndDelete(newUser._id);
+
+      throw error;
+    }
 
     return { user: newUser, role: defaultClientRole };
   }
