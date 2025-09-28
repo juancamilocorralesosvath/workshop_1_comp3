@@ -50,7 +50,6 @@ const attendanceSchema = new Schema<IAttendance>({
 
 // índices para optimizar consultas
 attendanceSchema.index({ user_id: 1 });
-attendanceSchema.index({ id: 1 });
 attendanceSchema.index({ date_key: 1 });
 attendanceSchema.index({ is_active: 1 });
 attendanceSchema.index({ type: 1 });

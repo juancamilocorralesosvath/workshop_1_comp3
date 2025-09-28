@@ -4,6 +4,7 @@ import { userRouter } from "./routes/user.routes";
 import { authRouter } from "./routes/auth.routes";
 import { membershipRouter } from "./routes/membership.routes";
 import { subscriptionRouter } from "./routes/subscription.routes";
+import { attendanceRouter } from "./routes/attendance.routes";
 
 
 const app: Express = express();
@@ -21,6 +22,7 @@ app.use('/users', userRouter)
 app.use('/auth', authRouter)
 app.use('/memberships', membershipRouter)
 app.use('/subscriptions', subscriptionRouter)
+app.use('/attendances', attendanceRouter)
 
 
 // 404 handler

@@ -7,7 +7,11 @@ export class AttendanceController {
 
   checkIn = async (req: Request, res: Response) => {
     try {
-      const checkInData = req.body as CheckInInput;
+      const { userId } = req.params;
+      const { type } = req.body;
+      if (!userId) return res.status(400).json({ message: 'User ID is required' });
+      
+      const checkInData: CheckInInput = { userId, type };
       const attendance = await attendanceService.checkIn(checkInData);
       return res.status(201).json(attendance);
     } catch (error) {
@@ -27,7 +31,10 @@ export class AttendanceController {
 
   checkOut = async (req: Request, res: Response) => {
     try {
-      const checkOutData = req.body as CheckOutInput;
+      const { userId } = req.params;
+      if (!userId) return res.status(400).json({ message: 'User ID is required' });
+      
+      const checkOutData: CheckOutInput = { userId };
       const attendance = await attendanceService.checkOut(checkOutData);
       return res.status(200).json(attendance);
     } catch (error) {
