@@ -7,6 +7,8 @@ import bcrypt from 'bcryptjs';
 jest.mock('../../src/models/User');
 jest.mock('../../src/models/Role');
 jest.mock('../../src/services/subscriptionService');
+jest.mock('../../src/utils/generateId');
+jest.mock('../../src/services/jwtService');
 jest.mock('bcryptjs');
 
 const MockedUser = User as jest.Mocked<typeof User>;

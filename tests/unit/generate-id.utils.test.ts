@@ -1,8 +1,3 @@
-// Mock nanoid before importing the actual functions
-jest.mock('nanoid', () => ({
-  nanoid: jest.fn(() => 'mock-id-123')
-}));
-
 import { generateUserId, generateMembershipId, generateSubscriptionId, generateAttendanceId } from '../../src/utils/generateId';
 
 describe('GenerateId Utils', () => {

@@ -4,6 +4,8 @@ import { Role } from '../../src/models/Role';
 
 jest.mock('../../src/models/User');
 jest.mock('../../src/models/Role');
+jest.mock('../../src/utils/generateId');
+jest.mock('../../src/services/subscriptionService');
 
 const MockedUser = User as jest.Mocked<typeof User>;
 const MockedRole = Role as jest.Mocked<typeof Role>;
