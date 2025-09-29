@@ -15,21 +15,6 @@ jobs:
         bun-version: ['latest']
       fail-fast: false
 
-    services:
-      mongodb:
-        image: mongo:7.0
-        env:
-          MONGO_INITDB_ROOT_USERNAME: testuser
-          MONGO_INITDB_ROOT_PASSWORD: testpass
-          MONGO_INITDB_DATABASE: workshop_test
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongo --eval 'db.runCommand({ping: 1})' --quiet"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -56,16 +41,9 @@ jobs:
     - name: Create test environment file
       run: |
         echo "NODE_ENV=test" > .env
-        echo "MONGO_URI=mongodb://testuser:testpass@localhost:27017/workshop_test?authSource=admin" >> .env
+        echo "MONGO_URI=mongodb://localhost:27017/workshop_test" >> .env
         echo "JWT_SECRET=test-jwt-secret-key" >> .env
         echo "JWT_EXPIRES_IN=1h" >> .env
-
-    - name: Wait for MongoDB
-      run: |
-        echo "Waiting for MongoDB to be ready..."
-        timeout 30 bash -c 'until nc -z localhost 27017; do sleep 1; done'
-        echo "MongoDB is ready!"
-        sleep 5
 
     - name: Run linting
       run: bun run lint
@@ -79,7 +57,7 @@ jobs:
       run: npm run ci:test
       env:
         NODE_ENV: test
-        MONGO_URI: mongodb://testuser:testpass@localhost:27017/workshop_test?authSource=admin
+        MONGO_URI: mongodb://localhost:27017/workshop_test
         JWT_SECRET: test-jwt-secret-key
         JWT_EXPIRES_IN: 1h
 
