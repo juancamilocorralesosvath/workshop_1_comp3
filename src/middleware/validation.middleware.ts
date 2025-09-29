@@ -71,9 +71,10 @@ export const addMembershipToSubscriptionSchema = z.object({
 });
 
 export const checkInSchema = z.object({
-  type: z.enum(['gym', 'class'], {
-    errorMap: () => ({ message: 'Type must be either "gym" or "class"' })
-  })
+  type: z.enum(['gym', 'class']).refine(
+    (val) => val === 'gym' || val === 'class',
+    { message: 'Type must be either "gym" or "class"' }
+  )
 });
 
 export const checkOutSchema = z.object({
@@ -82,9 +83,10 @@ export const checkOutSchema = z.object({
 export const attendanceHistoryQuerySchema = z.object({
   from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'From date must be in YYYY-MM-DD format').optional(),
   to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'To date must be in YYYY-MM-DD format').optional(),
-  type: z.enum(['gym', 'class'], {
-    errorMap: () => ({ message: 'Type must be either "gym" or "class"' })
-  }).optional()
+  type: z.enum(['gym', 'class']).refine(
+    (val) => val === 'gym' || val === 'class',
+    { message: 'Type must be either "gym" or "class"' }
+  )
 });
 
 export const validate = (schema: z.ZodSchema) => {
