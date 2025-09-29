@@ -53,7 +53,7 @@ describe('AuthService', () => {
       MockedUser.findOne.mockReturnValue({
         populate: jest.fn().mockResolvedValue(mockUser)
       } as any);
-      mockedBcrypt.compare.mockResolvedValue(true as any);
+      (mockedBcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       const result = await authService.validateUserCredentials('test@test.com', 'password');
 
@@ -65,7 +65,7 @@ describe('AuthService', () => {
       MockedUser.findOne.mockReturnValue({
         populate: jest.fn().mockResolvedValue(mockUser)
       } as any);
-      mockedBcrypt.compare.mockResolvedValue(false as any);
+      (mockedBcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(authService.validateUserCredentials('test@test.com', 'wrongpass')).rejects.toThrow();
     });
