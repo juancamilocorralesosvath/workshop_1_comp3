@@ -2,14 +2,14 @@ import mongoose, { Document, Schema, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
-  _id: Types.ObjectId; // <-- Agregado explícitamente
+  _id: Types.ObjectId;
   id: string;
   email: string;
   password: string;
   full_name: string;
   age: number;
   phone: string;
-  rol: Types.ObjectId[]; // <-- Cambiado a ObjectId[]
+  rol: Types.ObjectId[]; 
   isActive: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
