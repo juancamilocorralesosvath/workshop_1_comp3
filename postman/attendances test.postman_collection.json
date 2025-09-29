@@ -1,0 +1,218 @@
+{
+	"info": {
+		"_postman_id": "6d40d49d-10ce-4b82-bfd3-2f6e49839975",
+		"name": "attendances test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44658492"
+	},
+	"item": [
+		{
+			"name": "Login Admin Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Access token is received and saved to environment\", function () {",
+							"    // Parsea la respuesta JSON",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    // Verifica que el accessToken existe en la respuesta",
+							"    pm.expect(responseData.accessToken).to.exist;",
+							"    pm.expect(responseData.accessToken).to.be.a('string');",
+							"",
+							"    // Guarda el accessToken en una variable de entorno",
+							"    pm.environment.set(\"accessToken\", responseData.accessToken);",
+							"    ",
+							"    console.log(\"Access Token guardado exitosamente!\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Base Users (All get 'cliente' role initially) Copy 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Registration successful\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has access token\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('accessToken');",
+							"",
+							"    pm.environment.set(\"testUserId\", jsonData.user.id);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"testuser10@test.com\",\n  \"password\": \"test123\",\n  \"full_name\": \"Test User\",\n  \"age\": 25,\n  \"phone\": \"+1234567890\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/status/{{testUserId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"status",
+						"{{testUserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 Created\", () => pm.response.to.have.status(201));",
+							"",
+							"pm.test(\"Response is a valid attendance record\", () => {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData.user_id).to.eql(pm.environment.get(\"testUserId\"));",
+							"    pm.expect(responseData.is_active).to.be.true;",
+							"    pm.expect(responseData.exit_dateTime).to.be.null;",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"type\": \"gym\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/checkin/{{testUserId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"checkin",
+						"{{testUserId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

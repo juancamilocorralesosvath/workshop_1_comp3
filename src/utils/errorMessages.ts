@@ -40,5 +40,22 @@ export const ERROR_MESSAGES = {
 
  
   INTERNAL_SERVER_ERROR: 'Error interno del servidor',
-  SERVICE_UNAVAILABLE: 'Servicio no disponible'
+  SERVICE_UNAVAILABLE: 'Servicio no disponible',
+
+ 
+  SUBSCRIPTION_NOT_FOUND: 'No se encontró el historial de suscripciones.',
+  SUBSCRIPTION_ALREADY_EXISTS: 'Ya existe un historial de suscripciones para este usuario.',
+
+  
+  ATTENDANCE_NOT_FOUND: 'Asistencia no encontrada.',
+  ATTENDANCE_ALREADY_INSIDE: 'El usuario ya está dentro del gym.',
+  ATTENDANCE_NOT_INSIDE: 'El usuario no está actualmente dentro del gym.',
+  ATTENDANCE_NO_AVAILABLE: 'Sin asistencias disponibles para este tipo.',
+  ATTENDANCE_INVALID_TYPE: 'Tipo de asistencia inválido.',
+  ATTENDANCE_INVALID_DATE_RANGE: 'Rango de fechas inválido.',
+
+
+  UNAUTHORIZED: 'No autorizado. Se requiere un token de autenticación válido.',
+  FORBIDDEN: 'Acceso denegado. No tienes los permisos necesarios.',
+  VALIDATION_ERROR: 'Error de validación. Por favor, revisa los datos enviados.',
 } as const;
