@@ -3,7 +3,6 @@ import { MembershipController } from '../../../src/controllers/membership.contro
 import { membershipService } from '../../../src/services/membershipService';
 import { ERROR_MESSAGES } from '../../../src/utils/errorMessages';
 
-// Mock the membership service
 jest.mock('../../../src/services/membershipService', () => ({
   membershipService: {
     findAll: jest.fn(),
@@ -31,7 +30,7 @@ describe('MembershipController Unit Tests', () => {
     };
     mockNext = jest.fn();
 
-    // Clear all mocks
+    
     jest.clearAllMocks();
   });
 

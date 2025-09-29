@@ -5,7 +5,6 @@ import { User } from '../../../src/models/User';
 import { generateSubscriptionId } from '../../../src/utils/generateId';
 import { ERROR_MESSAGES } from '../../../src/utils/errorMessages';
 
-// Mock dependencies
 jest.mock('../../../src/models/Subscription');
 jest.mock('../../../src/models/Membership');
 jest.mock('../../../src/models/User');
@@ -109,7 +108,7 @@ describe('SubscriptionService Unit Tests', () => {
 
     it('should create subscription for user successfully', async () => {
       MockedUser.findOne.mockResolvedValue(mockUser);
-      MockedSubscription.findOne.mockResolvedValue(null); // No existing subscription
+      MockedSubscription.findOne.mockResolvedValue(null); 
 
       const result = await subscriptionService.createSubscriptionForUser({ userId: 'test-user-id' });
 
@@ -138,7 +137,7 @@ describe('SubscriptionService Unit Tests', () => {
 
     it('should throw error when subscription already exists', async () => {
       MockedUser.findOne.mockResolvedValue(mockUser);
-      MockedSubscription.findOne.mockResolvedValue(mockSubscription); // Existing subscription
+      MockedSubscription.findOne.mockResolvedValue(mockSubscription); 
 
       await expect(subscriptionService.createSubscriptionForUser({ userId: 'test-user-id' })).rejects.toThrow(
         ERROR_MESSAGES.SUBSCRIPTION_ALREADY_EXISTS

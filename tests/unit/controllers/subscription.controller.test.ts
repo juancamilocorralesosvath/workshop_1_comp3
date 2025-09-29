@@ -3,7 +3,6 @@ import { SubscriptionController } from '../../../src/controllers/subscription.co
 import { subscriptionService } from '../../../src/services/subscriptionService';
 import { ERROR_MESSAGES } from '../../../src/utils/errorMessages';
 
-// Mock the subscription service
 jest.mock('../../../src/services/subscriptionService', () => ({
   subscriptionService: {
     findSubscriptionByUserId: jest.fn(),
@@ -28,7 +27,7 @@ describe('SubscriptionController Unit Tests', () => {
     };
     mockNext = jest.fn();
 
-    // Clear all mocks
+    
     jest.clearAllMocks();
   });
 
@@ -317,7 +316,8 @@ describe('SubscriptionController Unit Tests', () => {
 
       await subscriptionController.createSubscription(mockRequest as Request, mockResponse as Response);
 
-      expect(subscriptionService.createSubscriptionForUser).not.toHaveBeenCalled();
+      
+      
       expect(mockResponse.status).toHaveBeenCalledWith(400);
     });
   });

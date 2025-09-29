@@ -3,7 +3,6 @@ import { Membership } from '../../../src/models/Membership';
 import { generateMembershipId } from '../../../src/utils/generateId';
 import { ERROR_MESSAGES } from '../../../src/utils/errorMessages';
 
-// Mock dependencies
 jest.mock('../../../src/models/Membership');
 jest.mock('../../../src/utils/generateId');
 
@@ -97,11 +96,11 @@ describe('MembershipService Unit Tests', () => {
   describe('createNewMembership', () => {
     beforeEach(() => {
       mockedGenerateMembershipId.mockReturnValue('generated-membership-id');
-      MockedMembership.findOne.mockResolvedValue(null); // No existing membership
+      MockedMembership.findOne.mockResolvedValue(null); 
       MockedMembership.prototype.save = jest.fn().mockResolvedValue(undefined);
       MockedMembership.findOne.mockImplementation((query: any) => {
-        if (query.name) return Promise.resolve(null); // For uniqueness check
-        if (query.id) return Promise.resolve(mockMembership); // For final return
+        if (query.name) return Promise.resolve(null); 
+        if (query.id) return Promise.resolve(mockMembership); 
         return Promise.resolve(null);
       });
     });
@@ -132,7 +131,7 @@ describe('MembershipService Unit Tests', () => {
         id: 'generated-membership-id',
         name: dataWithoutStatus.name,
         cost: dataWithoutStatus.cost,
-        status: true, // Default value
+        status: true, 
         max_classes_assistance: dataWithoutStatus.max_classes_assistance,
         max_gym_assistance: dataWithoutStatus.max_gym_assistance,
         duration_months: dataWithoutStatus.duration_months,
@@ -141,7 +140,7 @@ describe('MembershipService Unit Tests', () => {
 
     it('should throw error when name already exists', async () => {
       MockedMembership.findOne.mockImplementation((query: any) => {
-        if (query.name) return Promise.resolve(mockMembership); // Existing membership
+        if (query.name) return Promise.resolve(mockMembership); 
         return Promise.resolve(null);
       });
 
@@ -169,7 +168,7 @@ describe('MembershipService Unit Tests', () => {
 
       MockedMembership.findOne.mockImplementation((query: any) => {
         if (query.id === 'test-membership-id') return Promise.resolve(mockMembership);
-        if (query.name === updateData.name) return Promise.resolve(null); // No name conflict
+        if (query.name === updateData.name) return Promise.resolve(null); 
         return Promise.resolve(null);
       });
     });
@@ -188,7 +187,7 @@ describe('MembershipService Unit Tests', () => {
 
       await membershipService.updateExistingMembership('test-membership-id', sameNameUpdate);
 
-      expect(MockedMembership.findOne).toHaveBeenCalledTimes(2); // Once for find entity, once for final result
+      expect(MockedMembership.findOne).toHaveBeenCalledTimes(2); 
     });
 
     it('should throw error when updating to existing name', async () => {
