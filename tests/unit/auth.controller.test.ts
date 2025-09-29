@@ -58,13 +58,15 @@ describe('AuthController', () => {
     it('should handle email already exists error', async () => {
       mockRequest.body = { email: 'existing@test.com' };
 
-      const error = new Error('EMAIL_ALREADY_EXISTS');
+      const error = new Error('El email ya está registrado en el sistema.');
       mockedAuthService.validateEmailNotExists.mockRejectedValue(error);
 
       await authController.registerNewUser(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(409);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: 'EMAIL_ALREADY_EXISTS' });
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        message: 'El email ya está registrado en el sistema.'
+      });
     });
   });
 

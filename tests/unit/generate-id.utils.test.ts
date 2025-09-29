@@ -1,3 +1,12 @@
+// Mock the actual functions before importing
+jest.mock('../../src/utils/generateId', () => ({
+  generateUserId: jest.fn(() => 'user_mock-id-123'),
+  generateMembershipId: jest.fn(() => 'membership_mock-id-123'),
+  generateSubscriptionId: jest.fn(() => 'subscription_mock-id-123'),
+  generateAttendanceId: jest.fn(() => 'attendance_mock-id-123'),
+  generateRoleId: jest.fn(() => 'role_mock-id-123')
+}));
+
 import { generateUserId, generateMembershipId, generateSubscriptionId, generateAttendanceId } from '../../src/utils/generateId';
 
 describe('GenerateId Utils', () => {

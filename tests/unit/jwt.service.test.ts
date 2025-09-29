@@ -8,8 +8,6 @@ const mockedJwt = jwt as jest.Mocked<typeof jwt>;
 describe('JwtService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    process.env.JWT_SECRET = 'test-secret';
-    process.env.JWT_EXPIRES_IN = '1h';
   });
 
   describe('generateToken', () => {
@@ -19,7 +17,7 @@ describe('JwtService', () => {
 
       const result = generateToken(payload);
 
-      expect(mockedJwt.sign).toHaveBeenCalledWith(payload, 'test-secret', { expiresIn: '1h' });
+      expect(mockedJwt.sign).toHaveBeenCalledWith(payload, 'test-jwt-secret-key', { expiresIn: '7d', issuer: 'gym-management-system' });
       expect(result).toBe('access-token');
     });
   });
@@ -30,7 +28,7 @@ describe('JwtService', () => {
 
       const result = generateRefreshToken('user-id');
 
-      expect(mockedJwt.sign).toHaveBeenCalledWith({ userId: 'user-id' }, 'test-secret', { expiresIn: '7d' });
+      expect(mockedJwt.sign).toHaveBeenCalledWith({ userId: 'user-id' }, 'test-jwt-secret-key', { expiresIn: '30d', issuer: 'gym-management-system' });
       expect(result).toBe('refresh-token');
     });
   });
@@ -42,20 +40,20 @@ describe('JwtService', () => {
 
       const result = verifyToken('valid-token');
 
-      expect(mockedJwt.verify).toHaveBeenCalledWith('valid-token', 'test-secret');
+      expect(mockedJwt.verify).toHaveBeenCalledWith('valid-token', 'test-jwt-secret-key');
       expect(result).toEqual(decodedPayload);
     });
 
     it('should handle verification errors', () => {
       mockedJwt.verify.mockImplementation(() => {
-        throw new Error('Invalid token');
+        throw new Error('Invalid or expired token');
       });
 
       try {
         verifyToken('invalid-token');
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
-        expect((error as Error).message).toBe('Invalid token');
+        expect((error as Error).message).toBe('Invalid or expired token');
       }
     });
   });

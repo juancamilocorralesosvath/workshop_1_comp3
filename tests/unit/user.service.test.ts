@@ -45,17 +45,26 @@ describe('UserService', () => {
     it('should update user successfully', async () => {
       const mockUser = {
         id: 'user-id',
+        _id: { toString: () => 'mongodb-object-id' },
         full_name: 'Old Name',
+        email: 'test@test.com',
         save: jest.fn().mockResolvedValue(undefined)
       };
       const updateData = { full_name: 'New Name', age: 30 };
+      const updatedUserWithRoles = { ...mockUser, full_name: 'New Name', age: 30 };
 
       MockedUser.findOne.mockResolvedValue(mockUser as any);
+      MockedUser.findById.mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          select: jest.fn().mockResolvedValue(updatedUserWithRoles)
+        })
+      } as any);
 
       const result = await userService.updateExistingUser('user-id', updateData);
 
       expect(mockUser.full_name).toBe('New Name');
       expect(mockUser.save).toHaveBeenCalled();
+      expect(result).toEqual(updatedUserWithRoles);
     });
   });
 });

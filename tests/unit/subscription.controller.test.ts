@@ -21,7 +21,7 @@ describe('SubscriptionController', () => {
     jest.clearAllMocks();
   });
 
-  describe('getUserSubscription', () => {
+  describe('getSubscriptionByUserId', () => {
     it('should get user subscription successfully', async () => {
       mockRequest.params = { userId: 'user-id' };
 
@@ -33,7 +33,7 @@ describe('SubscriptionController', () => {
 
       mockedSubscriptionService.findSubscriptionByUserId.mockResolvedValue(mockSubscription as any);
 
-      await subscriptionController.getUserSubscription(mockRequest as Request, mockResponse as Response);
+      await subscriptionController.getSubscriptionByUserId(mockRequest as Request, mockResponse as Response);
 
       expect(mockedSubscriptionService.findSubscriptionByUserId).toHaveBeenCalledWith('user-id');
       expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -46,28 +46,27 @@ describe('SubscriptionController', () => {
       const error = new Error('Subscription not found');
       mockedSubscriptionService.findSubscriptionByUserId.mockRejectedValue(error);
 
-      await subscriptionController.getUserSubscription(mockRequest as Request, mockResponse as Response);
+      await subscriptionController.getSubscriptionByUserId(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(500);
     });
   });
 
-  describe('addMembershipToSubscription', () => {
-    it('should add membership to subscription successfully', async () => {
-      mockRequest.params = { userId: 'user-id' };
+  describe('addMembership', () => {
+    it('should add membership successfully', async () => {
+      mockRequest.params = { id: 'sub-id' };
       mockRequest.body = { membershipId: 'membership-id' };
 
       const mockUpdatedSubscription = {
         id: 'sub-id',
-        userId: 'user-id',
         subscriptions: [{ membershipId: 'membership-id', startDate: new Date() }]
       };
 
-      mockedSubscriptionService.addMembershipToUserSubscription.mockResolvedValue(mockUpdatedSubscription as any);
+      mockedSubscriptionService.addMembershipToSubscription.mockResolvedValue(mockUpdatedSubscription as any);
 
-      await subscriptionController.addMembershipToSubscription(mockRequest as Request, mockResponse as Response);
+      await subscriptionController.addMembership(mockRequest as Request, mockResponse as Response);
 
-      expect(mockedSubscriptionService.addMembershipToUserSubscription).toHaveBeenCalledWith('user-id', 'membership-id');
+      expect(mockedSubscriptionService.addMembershipToSubscription).toHaveBeenCalledWith('sub-id', { membershipId: 'membership-id' });
       expect(mockResponse.status).toHaveBeenCalledWith(200);
     });
   });

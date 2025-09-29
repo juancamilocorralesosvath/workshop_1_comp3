@@ -40,19 +40,29 @@ describe('MembershipService', () => {
         duration_months: 3
       };
 
-      mockedGenerateId.mockReturnValue('generated-id');
-      MockedMembership.findOne.mockResolvedValue(null);
-      const mockSave = jest.fn().mockResolvedValue(undefined);
-      MockedMembership.mockImplementation(() => ({ save: mockSave } as any));
+      const mockMembership = { id: 'generated-id', ...membershipData, status: true };
 
-      await membershipService.createNewMembership(membershipData);
+      mockedGenerateId.mockReturnValue('generated-id');
+      MockedMembership.findOne
+        .mockResolvedValueOnce(null) // For validateNameIsUnique
+        .mockResolvedValueOnce(mockMembership); // For getMembershipById
+
+      const mockSave = jest.fn().mockResolvedValue(mockMembership);
+      (MockedMembership as any).mockImplementation(() => ({ save: mockSave, id: 'generated-id' }));
+
+      const result = await membershipService.createNewMembership(membershipData);
 
       expect(MockedMembership.findOne).toHaveBeenCalledWith({ name: membershipData.name });
       expect(MockedMembership).toHaveBeenCalledWith({
         id: 'generated-id',
-        ...membershipData,
-        status: true
+        name: membershipData.name,
+        cost: membershipData.cost,
+        status: true,
+        max_classes_assistance: membershipData.max_classes_assistance,
+        max_gym_assistance: membershipData.max_gym_assistance,
+        duration_months: membershipData.duration_months
       });
+      expect(result).toEqual(mockMembership);
     });
   });
 
@@ -65,11 +75,13 @@ describe('MembershipService', () => {
         save: jest.fn().mockResolvedValue(undefined)
       };
       const updateData = { name: 'New Name', cost: 75000 };
+      const updatedMembership = { ...mockMembership, ...updateData };
 
       MockedMembership.findOne.mockImplementation((query: any) => {
-        if (query.id) return Promise.resolve(mockMembership);
-        if (query.name) return Promise.resolve(null);
-        return Promise.resolve(null);
+        if (query.id === 'membership-id') return Promise.resolve(mockMembership) as any;
+        if (query.name === 'New Name') return Promise.resolve(null) as any; // For validateNameIsUnique
+        if (query.id === 'membership-id' && !query.name) return Promise.resolve(updatedMembership) as any; // For getMembershipById
+        return Promise.resolve(null) as any;
       });
 
       const result = await membershipService.updateExistingMembership('membership-id', updateData);
@@ -77,6 +89,7 @@ describe('MembershipService', () => {
       expect(mockMembership.name).toBe('New Name');
       expect(mockMembership.cost).toBe(75000);
       expect(mockMembership.save).toHaveBeenCalled();
+      expect(result).toEqual(updatedMembership);
     });
   });
 });

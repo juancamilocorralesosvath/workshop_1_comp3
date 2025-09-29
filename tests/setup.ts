@@ -1,19 +1,7 @@
-// Global test setup
-import { jest } from '@jest/globals';
-
-// Mock nanoid globally
-jest.mock('nanoid', () => ({
-  nanoid: jest.fn(() => 'mock-id-123')
-}));
-
-// Mock other common utilities
-jest.mock('../src/utils/generateId', () => ({
-  generateUserId: jest.fn(() => 'user_mock-id-123'),
-  generateMembershipId: jest.fn(() => 'membership_mock-id-123'),
-  generateSubscriptionId: jest.fn(() => 'subscription_mock-id-123'),
-  generateAttendanceId: jest.fn(() => 'attendance_mock-id-123'),
-  generateRoleId: jest.fn(() => 'role_mock-id-123')
-}));
+// Set environment variables for tests
+process.env.JWT_SECRET = 'test-jwt-secret-key';
+process.env.JWT_EXPIRES_IN = '7d';
+process.env.NODE_ENV = 'test';
 
 // Console mock to reduce noise in tests
 global.console = {

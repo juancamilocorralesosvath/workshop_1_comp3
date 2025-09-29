@@ -9,7 +9,11 @@ jest.mock('../../src/models/Role');
 jest.mock('../../src/services/subscriptionService');
 jest.mock('../../src/utils/generateId');
 jest.mock('../../src/services/jwtService');
-jest.mock('bcryptjs');
+jest.mock('bcryptjs', () => ({
+  compare: jest.fn(),
+  hash: jest.fn(),
+  genSalt: jest.fn()
+}));
 
 const MockedUser = User as jest.Mocked<typeof User>;
 const MockedRole = Role as jest.Mocked<typeof Role>;
@@ -78,11 +82,10 @@ describe('AuthService', () => {
 
     it('should create user with client role successfully', async () => {
       const mockRole = { _id: 'role-id', name: 'cliente' };
-      const mockNewUser = { _id: 'user-id', save: jest.fn() };
+      const mockNewUser = { _id: 'user-id', id: 'user-id', save: jest.fn().mockResolvedValue(undefined) };
 
       MockedRole.findOne.mockResolvedValue(mockRole as any);
-      MockedUser.mockImplementation(() => mockNewUser as any);
-      mockNewUser.save.mockResolvedValue(undefined);
+      (MockedUser as any).mockImplementation(() => mockNewUser);
       mockedSubscriptionService.createSubscriptionForUser.mockResolvedValue(undefined);
 
       const result = await authService.createUserWithClientRole(userData);
