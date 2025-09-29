@@ -19,10 +19,10 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
+    "jest.config.js",
+    "test-register.js",
+    "src/scripts/init-database.js",
     "node_modules",
     "dist",
     "build"
