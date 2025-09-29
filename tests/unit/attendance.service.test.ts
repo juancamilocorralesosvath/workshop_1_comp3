@@ -23,33 +23,55 @@ describe('AttendanceService', () => {
         type: 'gym' as const
       };
 
-      const mockUser = { id: 'user-id', name: 'Test User' };
-      const mockSave = jest.fn().mockResolvedValue({ id: 'attendance-id' });
+      const mockUser = { _id: 'mongo-user-id', id: 'user-id', name: 'Test User' };
+      const mockAttendance = { id: 'attendance-id', user_id: 'user-id', type: 'gym' };
+      const mockSave = jest.fn().mockResolvedValue(mockAttendance);
 
+      // Mock validateUserExists
       MockedUser.findOne.mockResolvedValue(mockUser as any);
+
+      // Mock isUserCurrentlyInside (should return false to allow check-in)
       MockedAttendance.findOne.mockResolvedValue(null);
-      MockedSubscription.findOne.mockResolvedValue({
-        subscriptions: [{ membershipId: 'mem-id', endDate: new Date(Date.now() + 86400000) }]
+
+      // Mock validateUserCanEnter - needs subscription with available memberships
+      MockedSubscription.findOne.mockReturnValue({
+        populate: jest.fn().mockResolvedValue({
+          memberships: [{
+            membership_id: 'mem-id',
+            max_gym_assistance: 10,
+            duration_months: 1,
+            purchase_date: new Date()
+          }]
+        })
       } as any);
 
-      // Mock the constructor properly
+      // Mock Attendance constructor and find
       (MockedAttendance as any).mockImplementation(() => ({
-        save: mockSave
+        save: mockSave,
+        id: 'attendance-id'
       }));
+
+      MockedAttendance.find.mockReturnValue({
+        sort: jest.fn().mockResolvedValue([]) // No previous attendances today
+      } as any);
 
       const result = await attendanceService.checkIn(checkInData);
 
       expect(MockedUser.findOne).toHaveBeenCalledWith({ id: 'user-id' });
-      expect(result).toBeDefined();
+      expect(result).toEqual(mockAttendance);
     });
   });
 
   describe('getUserAttendanceHistory', () => {
     it('should get attendance history for user', async () => {
+      const mockUser = { id: 'user-id', name: 'Test User' };
       const mockAttendances = [
-        { id: 'att-1', userId: 'user-id', type: 'gym' },
-        { id: 'att-2', userId: 'user-id', type: 'class' }
+        { id: 'att-1', user_id: 'user-id', type: 'gym' },
+        { id: 'att-2', user_id: 'user-id', type: 'class' }
       ];
+
+      // Mock validateUserExists
+      MockedUser.findOne.mockResolvedValue(mockUser as any);
 
       MockedAttendance.find.mockReturnValue({
         sort: jest.fn().mockResolvedValue(mockAttendances)
@@ -62,6 +84,7 @@ describe('AttendanceService', () => {
         type: 'gym'
       });
 
+      expect(MockedUser.findOne).toHaveBeenCalledWith({ id: 'user-id' });
       expect(MockedAttendance.find).toHaveBeenCalled();
       expect(result).toEqual(mockAttendances);
     });

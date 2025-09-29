@@ -10,7 +10,7 @@ jest.mock('../../src/services/subscriptionService');
 jest.mock('../../src/utils/generateId');
 jest.mock('../../src/services/jwtService');
 jest.mock('bcryptjs', () => ({
-  compare: jest.fn(),
+  compare: jest.fn().mockResolvedValue(true),
   hash: jest.fn(),
   genSalt: jest.fn()
 }));

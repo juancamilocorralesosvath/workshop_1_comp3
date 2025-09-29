@@ -8,7 +8,7 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^nanoid$': '<rootDir>/tests/__mocks__/nanoid.js'
   },
   collectCoverageFrom: [

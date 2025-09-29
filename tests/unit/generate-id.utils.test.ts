@@ -1,10 +1,6 @@
-// Mock the actual functions before importing
-jest.mock('../../src/utils/generateId', () => ({
-  generateUserId: jest.fn(() => 'user_mock-id-123'),
-  generateMembershipId: jest.fn(() => 'membership_mock-id-123'),
-  generateSubscriptionId: jest.fn(() => 'subscription_mock-id-123'),
-  generateAttendanceId: jest.fn(() => 'attendance_mock-id-123'),
-  generateRoleId: jest.fn(() => 'role_mock-id-123')
+// Mock nanoid to return predictable values
+jest.mock('nanoid', () => ({
+  nanoid: jest.fn(() => 'mock-id-123')
 }));
 
 import { generateUserId, generateMembershipId, generateSubscriptionId, generateAttendanceId } from '../../src/utils/generateId';
@@ -13,21 +9,23 @@ describe('GenerateId Utils', () => {
   describe('generateUserId', () => {
     it('should generate user id with correct prefix', () => {
       const userId = generateUserId();
-      expect(userId).toMatch(/^user/);
+      expect(userId).toMatch(/^user_/);
+      expect(userId).toBe('user_mock-id-123');
       expect(userId.length).toBeGreaterThan(5);
     });
 
     it('should generate consistent format', () => {
       const userId = generateUserId();
       expect(typeof userId).toBe('string');
-      expect(userId).toContain('user');
+      expect(userId).toContain('user_');
     });
   });
 
   describe('generateMembershipId', () => {
     it('should generate membership id with correct prefix', () => {
       const membershipId = generateMembershipId();
-      expect(membershipId).toMatch(/^membership/);
+      expect(membershipId).toMatch(/^membership_/);
+      expect(membershipId).toBe('membership_mock-id-123');
       expect(membershipId.length).toBeGreaterThan(10);
     });
   });
@@ -35,7 +33,8 @@ describe('GenerateId Utils', () => {
   describe('generateSubscriptionId', () => {
     it('should generate subscription id with correct prefix', () => {
       const subscriptionId = generateSubscriptionId();
-      expect(subscriptionId).toMatch(/^subscription/);
+      expect(subscriptionId).toMatch(/^subscription_/);
+      expect(subscriptionId).toBe('subscription_mock-id-123');
       expect(subscriptionId.length).toBeGreaterThan(12);
     });
   });
@@ -43,7 +42,8 @@ describe('GenerateId Utils', () => {
   describe('generateAttendanceId', () => {
     it('should generate attendance id with correct prefix', () => {
       const attendanceId = generateAttendanceId();
-      expect(attendanceId).toMatch(/^attendance/);
+      expect(attendanceId).toMatch(/^attendance_/);
+      expect(attendanceId).toBe('attendance_mock-id-123');
       expect(attendanceId.length).toBeGreaterThan(10);
     });
   });
