@@ -9,8 +9,9 @@ jest.mock('../../src/models/Role');
 jest.mock('../../src/services/subscriptionService');
 jest.mock('../../src/utils/generateId');
 jest.mock('../../src/services/jwtService');
+const mockBcryptCompare = jest.fn();
 jest.mock('bcryptjs', () => ({
-  compare: jest.fn().mockResolvedValue(true),
+  compare: mockBcryptCompare,
   hash: jest.fn(),
   genSalt: jest.fn()
 }));
@@ -18,9 +19,6 @@ jest.mock('bcryptjs', () => ({
 const MockedUser = User as jest.Mocked<typeof User>;
 const MockedRole = Role as jest.Mocked<typeof Role>;
 const mockedSubscriptionService = subscriptionService as jest.Mocked<typeof subscriptionService>;
-const mockedBcrypt = bcrypt as jest.Mocked<typeof bcrypt> & {
-  compare: jest.MockedFunction<typeof bcrypt.compare>;
-};
 
 describe('AuthService', () => {
   beforeEach(() => {
@@ -55,7 +53,7 @@ describe('AuthService', () => {
       MockedUser.findOne.mockReturnValue({
         populate: jest.fn().mockResolvedValue(mockUser)
       } as any);
-      mockedBcrypt.compare.mockResolvedValue(true);
+      mockBcryptCompare.mockResolvedValue(true);
 
       const result = await authService.validateUserCredentials('test@test.com', 'password');
 
@@ -67,7 +65,7 @@ describe('AuthService', () => {
       MockedUser.findOne.mockReturnValue({
         populate: jest.fn().mockResolvedValue(mockUser)
       } as any);
-      mockedBcrypt.compare.mockResolvedValue(false);
+      mockBcryptCompare.mockResolvedValue(false);
 
       await expect(authService.validateUserCredentials('test@test.com', 'wrongpass')).rejects.toThrow();
     });

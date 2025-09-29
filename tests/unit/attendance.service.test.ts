@@ -55,6 +55,11 @@ describe('AttendanceService', () => {
         id: 'attendance-id'
       }));
 
+      // Mock getAttendanceById (called at the end of checkIn)
+      MockedAttendance.findOne
+        .mockResolvedValueOnce(null) // For isUserCurrentlyInside
+        .mockResolvedValueOnce(mockAttendance as any); // For getAttendanceById
+
       const result = await attendanceService.checkIn(checkInData);
 
       expect(MockedUser.findOne).toHaveBeenCalledWith({ id: 'user-id' });
