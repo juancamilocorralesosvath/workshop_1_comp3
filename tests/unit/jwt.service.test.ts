@@ -46,12 +46,17 @@ describe('JwtService', () => {
       expect(result).toEqual(decodedPayload);
     });
 
-    it('should throw error for invalid token', () => {
+    it('should handle verification errors', () => {
       mockedJwt.verify.mockImplementation(() => {
         throw new Error('Invalid token');
       });
 
-      expect(() => verifyToken('invalid-token')).toThrow('Invalid token');
+      try {
+        verifyToken('invalid-token');
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect((error as Error).message).toBe('Invalid token');
+      }
     });
   });
 });

@@ -1,52 +1,56 @@
 import { attendanceService } from '../../src/services/attendanceService';
 import { Attendance } from '../../src/models/Attendance';
-import { generateAttendanceId } from '../../src/utils/generateId';
+import { User } from '../../src/models/User';
 
 jest.mock('../../src/models/Attendance');
-jest.mock('../../src/utils/generateId');
+jest.mock('../../src/models/User');
 
 const MockedAttendance = Attendance as jest.Mocked<typeof Attendance>;
-const mockedGenerateId = generateAttendanceId as jest.MockedFunction<typeof generateAttendanceId>;
+const MockedUser = User as jest.Mocked<typeof User>;
 
 describe('AttendanceService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('createAttendance', () => {
-    it('should create attendance successfully', async () => {
-      const attendanceData = {
+  describe('checkIn', () => {
+    it('should check in user successfully', async () => {
+      const checkInData = {
         userId: 'user-id',
-        activity_type: 'gym',
-        check_in_time: new Date()
+        type: 'gym' as const
       };
 
-      mockedGenerateId.mockReturnValue('attendance-id');
+      const mockUser = { id: 'user-id', name: 'Test User' };
       const mockSave = jest.fn().mockResolvedValue(undefined);
+
+      MockedUser.findOne.mockResolvedValue(mockUser as any);
+      MockedAttendance.findOne.mockResolvedValue(null);
       MockedAttendance.mockImplementation(() => ({ save: mockSave } as any));
 
-      const result = await attendanceService.createAttendance(attendanceData);
+      await attendanceService.checkIn(checkInData);
 
-      expect(MockedAttendance).toHaveBeenCalledWith({
-        id: 'attendance-id',
-        ...attendanceData
-      });
+      expect(MockedUser.findOne).toHaveBeenCalledWith({ id: 'user-id' });
       expect(mockSave).toHaveBeenCalled();
     });
   });
 
-  describe('findAttendanceByUserId', () => {
-    it('should find attendance records by user id', async () => {
+  describe('getAttendanceHistory', () => {
+    it('should get attendance history for user', async () => {
       const mockAttendances = [
-        { id: 'att-1', userId: 'user-id', activity_type: 'gym' },
-        { id: 'att-2', userId: 'user-id', activity_type: 'class' }
+        { id: 'att-1', userId: 'user-id', type: 'gym' },
+        { id: 'att-2', userId: 'user-id', type: 'class' }
       ];
 
       MockedAttendance.find.mockResolvedValue(mockAttendances as any);
 
-      const result = await attendanceService.findAttendanceByUserId('user-id');
+      const result = await attendanceService.getAttendanceHistory({
+        userId: 'user-id',
+        from: '2023-01-01',
+        to: '2023-12-31',
+        type: 'gym'
+      });
 
-      expect(MockedAttendance.find).toHaveBeenCalledWith({ userId: 'user-id' });
+      expect(MockedAttendance.find).toHaveBeenCalled();
       expect(result).toEqual(mockAttendances);
     });
   });

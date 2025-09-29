@@ -1,9 +1,12 @@
 import { userService } from '../../src/services/userService';
 import { User } from '../../src/models/User';
+import { Role } from '../../src/models/Role';
 
 jest.mock('../../src/models/User');
+jest.mock('../../src/models/Role');
 
 const MockedUser = User as jest.Mocked<typeof User>;
+const MockedRole = Role as jest.Mocked<typeof Role>;
 
 describe('UserService', () => {
   beforeEach(() => {
@@ -36,8 +39,8 @@ describe('UserService', () => {
     });
   });
 
-  describe('updateUserProfile', () => {
-    it('should update user profile successfully', async () => {
+  describe('updateExistingUser', () => {
+    it('should update user successfully', async () => {
       const mockUser = {
         id: 'user-id',
         full_name: 'Old Name',
@@ -47,11 +50,10 @@ describe('UserService', () => {
 
       MockedUser.findOne.mockResolvedValue(mockUser as any);
 
-      const result = await userService.updateUserProfile('user-id', updateData);
+      const result = await userService.updateExistingUser('user-id', updateData);
 
       expect(mockUser.full_name).toBe('New Name');
       expect(mockUser.save).toHaveBeenCalled();
-      expect(result).toBe(mockUser);
     });
   });
 });

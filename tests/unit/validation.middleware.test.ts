@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { validateSchema } from '../../src/middleware/validation.middleware';
+import { validate } from '../../src/middleware/validation.middleware';
 import { z } from 'zod';
 
 describe('ValidationMiddleware', () => {
@@ -14,9 +14,14 @@ describe('ValidationMiddleware', () => {
       json: jest.fn().mockReturnThis()
     };
     mockNext = jest.fn();
+    jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
-  describe('validateSchema', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe('validate', () => {
     const testSchema = z.object({
       email: z.string().email(),
       name: z.string().min(2)
@@ -28,7 +33,7 @@ describe('ValidationMiddleware', () => {
         name: 'Test User'
       };
 
-      const middleware = validateSchema(testSchema);
+      const middleware = validate(testSchema);
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
@@ -41,7 +46,7 @@ describe('ValidationMiddleware', () => {
         name: 'a'
       };
 
-      const middleware = validateSchema(testSchema);
+      const middleware = validate(testSchema);
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -51,7 +56,7 @@ describe('ValidationMiddleware', () => {
     it('should handle missing body', () => {
       mockRequest.body = undefined;
 
-      const middleware = validateSchema(testSchema);
+      const middleware = validate(testSchema);
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
