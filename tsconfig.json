@@ -17,14 +17,12 @@
     "noImplicitOverride": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
+    "noPropertyAccessFromIndexSignature": false,
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
   "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build"
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ]
 }
