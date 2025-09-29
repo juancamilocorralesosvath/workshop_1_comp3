@@ -11,14 +11,14 @@ const LOCAL_MONGO_URI = 'mongodb://localhost:27018/workshop'
 
 
 const connectionString = process.env.MONGO_URI || CLOUD_MONGO_URI
-console.log("🚀 ~ connectionString:", connectionString)
+console.log(" ~ connectionString:", connectionString)
 
-console.log('🔗 Connecting to MongoDB:', connectionString.includes('cluster0') ? 'Cloud Database (Atlas)' : 'Local Database (Docker)')
+console.log(' Connecting to MongoDB:', connectionString.includes('cluster0') ? 'Cloud Database (Atlas)' : 'Local Database (Docker)')
 
 export const db = mongoose.connect(connectionString, {dbName: 'workshop'}).then((mongooseInstance) => {
-    console.log("✅ Connected to MongoDB")
+    console.log(" Connected to MongoDB")
     return mongooseInstance
 }).catch((error) => {
-    console.log("❌ MongoDB connection error:", error)
+    console.log(" MongoDB connection error:", error)
     throw error
 })
