@@ -28,8 +28,8 @@ beforeEach(async () => {
   const collections = mongoose.connection.collections;
 
   for (const key in collections) {
-    if (key !== 'roles') {
-      await collections[key].deleteMany({});
+    if (key !== 'roles' && collections[key]) {
+      await collections[key]!.deleteMany({});
     }
   }
 });
