@@ -18,7 +18,9 @@ jest.mock('bcryptjs', () => ({
 const MockedUser = User as jest.Mocked<typeof User>;
 const MockedRole = Role as jest.Mocked<typeof Role>;
 const mockedSubscriptionService = subscriptionService as jest.Mocked<typeof subscriptionService>;
-const mockedBcrypt = bcrypt as jest.Mocked<typeof bcrypt>;
+const mockedBcrypt = bcrypt as jest.Mocked<typeof bcrypt> & {
+  compare: jest.MockedFunction<typeof bcrypt.compare>;
+};
 
 describe('AuthService', () => {
   beforeEach(() => {

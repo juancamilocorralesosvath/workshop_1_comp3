@@ -27,33 +27,33 @@ describe('AttendanceService', () => {
       const mockAttendance = { id: 'attendance-id', user_id: 'user-id', type: 'gym' };
       const mockSave = jest.fn().mockResolvedValue(mockAttendance);
 
-      // Mock validateUserExists
-      MockedUser.findOne.mockResolvedValue(mockUser as any);
+      // Mock validateUserExists - this is called first
+      MockedUser.findOne
+        .mockResolvedValueOnce(mockUser as any) // For validateUserExists
+        .mockResolvedValueOnce(mockUser as any); // For calculateAvailableAttendances
 
       // Mock isUserCurrentlyInside (should return false to allow check-in)
       MockedAttendance.findOne.mockResolvedValue(null);
 
-      // Mock validateUserCanEnter - needs subscription with available memberships
-      MockedSubscription.findOne.mockReturnValue({
-        populate: jest.fn().mockResolvedValue({
-          memberships: [{
-            membership_id: 'mem-id',
-            max_gym_assistance: 10,
-            duration_months: 1,
-            purchase_date: new Date()
-          }]
-        })
+      // Mock calculateAvailableAttendances - needs subscription with available memberships
+      MockedSubscription.findOne.mockResolvedValue({
+        memberships: [{
+          membership_id: 'mem-id',
+          max_gym_assistance: 10,
+          max_classes_assistance: 5,
+          duration_months: 1,
+          purchase_date: new Date()
+        }]
       } as any);
 
-      // Mock Attendance constructor and find
+      // Mock used attendances for current month (empty = all available)
+      MockedAttendance.find.mockResolvedValue([]); // No previous attendances this month
+
+      // Mock Attendance constructor
       (MockedAttendance as any).mockImplementation(() => ({
         save: mockSave,
         id: 'attendance-id'
       }));
-
-      MockedAttendance.find.mockReturnValue({
-        sort: jest.fn().mockResolvedValue([]) // No previous attendances today
-      } as any);
 
       const result = await attendanceService.checkIn(checkInData);
 
