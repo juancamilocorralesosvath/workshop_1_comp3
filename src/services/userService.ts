@@ -34,32 +34,30 @@ class UserService implements IUserService {
   }
 
   async createNewUser(userData: ICreateUserData): Promise<any> {
-    console.log('🔍 Creating user with data:', { email: userData.email, roleIds: userData.roleIds });
+    console.log('Creating user with data:', { email: userData.email, roleIds: userData.roleIds });
 
     await this.validateEmailIsUnique(userData.email);
 
     const assignedRoles = await this.getAssignedRoles(userData.roleIds);
-    console.log('📝 Assigned roles:', assignedRoles);
+    console.log('Assigned roles:', assignedRoles);
 
     const uniqueUserId = generateUserId();
-    console.log('🆔 Generated user ID:', uniqueUserId);
+    console.log('Generated user ID:', uniqueUserId);
 
     const newUser = await this.buildAndSaveUser(userData, uniqueUserId, assignedRoles);
-    console.log('✅ User saved with _id:', newUser._id);
+    console.log('User saved with _id:', newUser._id);
 
     try {
       await subscriptionService.createSubscriptionForUser({ userId: uniqueUserId });
-      console.log('✅ Subscription history created successfully.');
+      console.log('Subscription history created successfully.');
     } catch (error) {
-      console.log("🚀 ~ UserService ~ createNewUser ~ error:", error)
-      console.error(`❌ FAILED to create subscription for user ${uniqueUserId}. Rolling back user creation.`);
-    await User.findByIdAndDelete(newUser._id);
-    
-   
-    throw error;
+      console.log("UserService createNewUser error:", error)
+      console.error(`FAILED to create subscription for user ${uniqueUserId}. Rolling back user creation.`);
+      await User.findByIdAndDelete(newUser._id.toString());
+      throw error;
     }
 
-    return await this.getUserWithRolesById(newUser._id);
+    return await this.getUserWithRolesById(newUser._id.toString());
   }
 
   async updateExistingUser(userId: string, updateData: IUpdateUserData): Promise<any> {
@@ -72,12 +70,12 @@ class UserService implements IUserService {
     this.applyUpdatesToUser(existingUser, updateData);
     await existingUser.save();
 
-    return await this.getUserWithRolesById(existingUser._id);
+    return await this.getUserWithRolesById(existingUser._id.toString());
   }
 
   async removeUser(userId: string): Promise<void> {
     const userToDelete = await this.findUserEntityById(userId);
-    await User.findByIdAndDelete(userToDelete._id);
+    await User.findByIdAndDelete(userToDelete._id.toString());
   }
 
   async assignRolesToUser(userId: string, roleIds: string[]): Promise<any> {
@@ -87,7 +85,7 @@ class UserService implements IUserService {
     userToUpdate.rol = validatedRoleObjectIds;
     await userToUpdate.save();
 
-    return await this.getUserWithRolesById(userToUpdate._id);
+    return await this.getUserWithRolesById(userToUpdate._id.toString());
   }
 
   async toggleUserActiveStatus(userId: string): Promise<any> {
@@ -96,7 +94,7 @@ class UserService implements IUserService {
     userToToggle.isActive = !userToToggle.isActive;
     await userToToggle.save();
 
-    return await this.getUserWithRolesById(userToToggle._id);
+    return await this.getUserWithRolesById(userToToggle._id.toString());
   }
 
   private async validateEmailIsUnique(email: string): Promise<void> {
@@ -153,12 +151,12 @@ class UserService implements IUserService {
     return user;
   }
 
-  private async getUserWithRolesById(objectId: string) {
-    console.log('🔍 Looking for user with _id:', objectId);
-    const user = await User.findById(objectId)
+  private async getUserWithRolesById(objectId: any) {
+    console.log('Looking for user with _id:', objectId);
+    const user = await User.findById(String(objectId))
       .populate('rol', 'name')
       .select('-password');
-    console.log('👤 Found user:', user ? 'YES' : 'NO');
+    console.log('Found user:', user ? 'YES' : 'NO');
     return user;
   }
 

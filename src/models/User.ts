@@ -2,13 +2,14 @@ import mongoose, { Document, Schema, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
+  _id: Types.ObjectId; // <-- Agregado explícitamente
   id: string;
   email: string;
   password: string;
   full_name: string;
   age: number;
   phone: string;
-  rol: string[];
+  rol: Types.ObjectId[]; // <-- Cambiado a ObjectId[]
   isActive: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -58,7 +59,6 @@ const userSchema = new Schema<IUser>({
   timestamps: true
 });
 
-
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
 
@@ -70,7 +70,6 @@ userSchema.pre('save', async function(next) {
     next(error);
   }
 });
-
 
 userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
