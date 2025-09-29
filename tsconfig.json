@@ -7,6 +7,7 @@
     "jsx": "react-jsx",
     "allowJs": true,
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
     "verbatimModuleSyntax": false,
     "noEmit": false,
     "strict": true,
@@ -17,5 +18,13 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
-  }
+  },
+  "exclude": [
+    "jest.config.js",
+    "test-register.js",
+    "src/scripts/init-database.js",
+    "node_modules",
+    "dist",
+    "build"
+  ]
 }
