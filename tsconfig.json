@@ -17,14 +17,12 @@
     "noImplicitOverride": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
+    "noPropertyAccessFromIndexSignature": false,
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
-  "exclude": [
-    "jest.config.js",
-    "test-register.js",
-    "src/scripts/init-database.js",
-    "node_modules",
-    "dist",
-    "build"
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ]
 }
