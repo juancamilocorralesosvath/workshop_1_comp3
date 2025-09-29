@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        bun-version: ['1.0.0', 'latest']  # Puedes ajustar según tus necesidades
 
     services:
       mongodb:
@@ -24,7 +24,7 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd mongo
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -33,14 +33,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+    - name: Setup Bun ${{ matrix.bun-version }}
+      uses: oven-sh/setup-bun@v1
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        bun-version: ${{ matrix.bun-version }}
 
     - name: Install dependencies
-      run: npm ci
+      run: bun install --ci
 
     - name: Create test environment file
       run: |
@@ -49,18 +48,18 @@ jobs:
 
     - name: Wait for MongoDB
       run: |
-        timeout 30 bash -c 'until mongo --host localhost:27017 --username testuser --password testpass --authenticationDatabase admin --eval "db.adminCommand({ping: 1})"; do sleep 1; done'
+        timeout 30 bash -c 'until mongosh --host localhost:27017 --username testuser --password testpass --authenticationDatabase admin --eval "db.runCommand({ping: 1})"; do sleep 1; done'
 
     - name: Run linting
-      run: npm run lint
+      run: bun run lint
       continue-on-error: true
 
     - name: Run type checking
-      run: npm run typecheck
+      run: bun run typecheck
       continue-on-error: true
 
     - name: Run unit tests
-      run: npm run test:unit
+      run: bun run test:unit
       env:
         NODE_ENV: test
         MONGO_URI: mongodb://testuser:testpass@localhost:27017/workshop_test?authSource=admin
@@ -68,7 +67,7 @@ jobs:
         JWT_EXPIRES_IN: 1h
 
     - name: Run integration tests
-      run: npm run test:integration
+      run: bun run test:integration
       env:
         NODE_ENV: test
         MONGO_URI: mongodb://testuser:testpass@localhost:27017/workshop_test?authSource=admin
@@ -76,7 +75,7 @@ jobs:
         JWT_EXPIRES_IN: 1h
 
     - name: Run all tests with coverage
-      run: npm run test:coverage
+      run: bun run test:coverage
       env:
         NODE_ENV: test
         MONGO_URI: mongodb://testuser:testpass@localhost:27017/workshop_test?authSource=admin
@@ -92,7 +91,7 @@ jobs:
         fail_ci_if_error: false
 
     - name: Build application
-      run: npm run build
+      run: bun run build
 
   lint:
     runs-on: ubuntu-latest
@@ -100,21 +99,20 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
       with:
-        node-version: '20.x'
-        cache: 'npm'
+        bun-version: 'latest'
 
     - name: Install dependencies
-      run: npm ci
+      run: bun install --ci
 
     - name: Run ESLint
-      run: npm run lint
+      run: bun run lint
       continue-on-error: true
 
     - name: Run TypeScript check
-      run: npm run typecheck
+      run: bun run typecheck
       continue-on-error: true
 
   security:
@@ -123,19 +121,23 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
       with:
-        node-version: '20.x'
-        cache: 'npm'
+        bun-version: 'latest'
 
     - name: Install dependencies
-      run: npm ci
+      run: bun install --ci
 
     - name: Run security audit
-      run: npm audit --audit-level=moderate
+      # Bun no tiene un `bun audit` nativo aún (a mayo 2024), así que usamos npm como fallback
+      run: |
+        npm ci --package-lock-only
+        npm audit --audit-level=moderate
       continue-on-error: true
 
     - name: Check for outdated packages
-      run: npm outdated
+      run: |
+        npm ci --package-lock-only
+        npm outdated
       continue-on-error: true
