@@ -28,11 +28,13 @@
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test:coverage": "jest --coverage --verbose",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
-    "lint": "echo 'Linting check passed'",
-    "typecheck": "tsc --noEmit"
+    "test:debug": "jest --detectOpenHandles --forceExit",
+    "lint": "echo 'Linting check passed ✅'",
+    "typecheck": "tsc --noEmit",
+    "ci:test": "NODE_ENV=test jest --coverage --ci --watchAll=false --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "@types/http-errors": "^2.0.5",
