@@ -273,11 +273,13 @@ test: agregar tests
 ---
 ## **Modelado de la base de datos**
 
-![Texto alternativo](./modelado.jpeg)
+![Modelado de datos en Mongo](./modelado.jpeg)
 
 ---
 ### **Link al despliegue del proyecto**
 https://workshop-1-comp3.onrender.com/health
+
+---
 
 ### **tests**
 
@@ -286,6 +288,26 @@ Tests desarrollados usando Jest. para correr, usar el comando:
 ```bash
 npx jest
 ```
+
+---
+
+## **Postman**
+
+Para correr de manera exitosa las pruebas de postman, se debe crear un environment para cada coleccion. entonces: 
+
+1. Importar las colecciones que se encuentran en este repositorio a su aplicacion de postman
+
+2. configurar los environments como se muestra a continuacion:
+
+para memberships:
+![Environment en postman para el modulo de memberships](./postman-memberships.png)
+
+para subscriptions:
+![Environment en postman para el modulo de memberships](./postman-subscriptions.png)
+
+para attendances:
+![Environment en postman para el modulo de memberships](./postman-attendances.png)
+
 
 
 
