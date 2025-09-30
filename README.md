@@ -159,72 +159,36 @@ router.get('/users',
 | DELETE | `/:id` | Eliminar usuario | Admin |
 | POST | `/assign-roles` | Asignar roles | Admin |
 
-## 💾 Modelos de Datos
 
-### Usuario (User)
-```typescript
-interface IUser {
-  id: string;           // ID único generado
-  email: string;        // Email único (validado)
-  password: string;     // Contraseña encriptada
-  fulll_name: string;   // Nombre completo
-  age: string;          // Edad
-  phone: string;        // Teléfono
-  rol: ObjectId[];      // Referencias a roles
-  isActive: boolean;    // Estado del usuario
-  lastLogin?: Date;     // Último inicio de sesión
-}
-```
+### 🏋️‍♀️ Membresías (`/memberships`)
 
-### Rol (Role)
-```typescript
-interface IRole {
-  id: string;              // ID único generado
-  name: string;            // Nombre del rol (único)
-  permissions: ObjectId[]; // Referencias a permisos
-}
-```
+| Método | Endpoint | Descripción | Acceso |
+|--------|----------|-------------|---------|
+| GET | `/` | Obtener todas las membresías disponibles en el gimnasio. | Admin/Recepcionista |
+| GET | `/:id` | Obtener una membresía específica por su ID. | Admin/Recepcionista/Coach |
+| POST | `/` | Crear una nueva plantilla de membresía. | Admin |
+| PUT | `/:id` | Actualizar los detalles de una membresía existente. | Admin |
+| DELETE | `/:id` | Eliminar una plantilla de membresía. | Admin |
+| PATCH | `/:id/toggle-status` | Activar o desactivar el estado de una membresía. | Admin |
 
-### Permiso (Permission)
-```typescript
-interface IPermission {
-  id: string;   // ID único generado
-  name: string; // Nombre del permiso (único)
-}
-```
+### 📜 Suscripciones (`/subscriptions`)
 
-## 🧪 Ejemplos de Uso
+| Método | Endpoint | Descripción | Acceso |
+|--------|----------|-------------|---------|
+| GET | `/user/:userId` | Obtener el historial de suscripciones de un usuario. | Admin/Recepcionista (o propietario) |
+| PUT | `/:id/add-membership` | Añadir una nueva compra de membresía al historial de un usuario. | Admin/Recepcionista |
+| POST | `/` | Crear manualmente un historial para un usuario (uso administrativo). | Admin |
 
-### Registro de Usuario
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "usuario@example.com",
-    "password": "password123",
-    "fulll_name": "Juan Pérez",
-    "age": "25",
-    "phone": "+573001234567"
-  }'
-```
+### 🏃‍♂️ Asistencias (`/attendances`)
 
-### Respuesta Exitosa
-```json
-{
-  "success": true,
-  "message": "User registered successfully",
-  "data": {
-    "user": {
-      "id": "user_a1b2c3d4e5f6",
-      "email": "usuario@example.com",
-      "fulll_name": "Juan Pérez",
-      "rol": [{"name": "cliente"}]
-    },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  }
-}
-```
+| Método | Endpoint | Descripción | Acceso |
+|--------|----------|-------------|---------|
+| POST | `/check-in/:userId` | Registrar la entrada (check-in) de un usuario al gimnasio o a una clase. | Admin/Recepcionista |
+| POST | `/check-out/:userId` | Registrar la salida (check-out) de un usuario. | Admin/Recepcionista |
+| GET | `/status/:userId` | Verificar si un usuario está dentro y sus asistencias disponibles. | Admin/Recepcionista (o propietario) |
+| GET | `/history/:userId` | Obtener el historial de asistencias de un usuario (permite filtros). | Admin/Recepcionista (o propietario) |
+| GET | `/stats/:userId` | Obtener estadísticas de asistencia (anuales y mensuales) de un usuario. | Admin/Recepcionista (o propietario) |
+| GET | `/active` | Listar todos los usuarios que se encuentran actualmente dentro del gimnasio. | Admin/Recepcionista/Coach |
 
 ## 🔧 Configuración Inicial
 
@@ -233,8 +197,6 @@ curl -X POST http://localhost:3000/api/auth/register \
 Email: admin@gym.com
 Password: admin123
 ```
-
-⚠️ **IMPORTANTE**: Cambiar estas credenciales en producción.
 
 ## 🛠️ Herramientas de Desarrollo
 
@@ -309,5 +271,10 @@ test: agregar tests
 ```
 
 ---
+## **Modelado de la base de datos**
+
+![Texto alternativo](./modelado.jpeg)
+
+
 
 *Desarrollado con ❤️ por el equipo de desarrollo*
