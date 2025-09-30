@@ -308,7 +308,7 @@ para subscriptions:
 para attendances:
 ![Environment en postman para el modulo de memberships](./postman-attendances.png)
 
-
+nota: es importante hacer a mano la variable baseUrl para cada uno de los environments, pero ya las demas variables se generan con los scripts de las peticiones
 
 
 *Desarrollado con ❤️ por el equipo de desarrollo*
