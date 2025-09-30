@@ -137,7 +137,7 @@ router.get('/users',
 
 ## 📡 API Endpoints
 
-### 🔑 Autenticación (`/api/auth`)
+### 🔑 Autenticación (`/auth`)
 
 | Método | Endpoint | Descripción | Acceso |
 |--------|----------|-------------|---------|
@@ -148,7 +148,7 @@ router.get('/users',
 | PUT | `/profile` | Actualizar perfil | Autenticado |
 | PUT | `/change-password` | Cambiar contraseña | Autenticado |
 
-### 👤 Gestión de Usuarios (`/api/users`)
+### 👤 Gestión de Usuarios (`/users`)
 
 | Método | Endpoint | Descripción | Acceso |
 |--------|----------|-------------|---------|
@@ -274,6 +274,12 @@ test: agregar tests
 ## **Modelado de la base de datos**
 
 ![Texto alternativo](./modelado.jpeg)
+
+---
+### **Link al despliegue del proyecto**
+https://workshop-1-comp3.onrender.com/
+
+
 
 
 
