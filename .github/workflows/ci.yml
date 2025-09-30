@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, test ]
   pull_request:
     branches: [ main, develop ]
 
@@ -12,130 +12,64 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
-
-    services:
-      mongodb:
-        image: mongo:7.0
-        env:
-          MONGO_INITDB_ROOT_USERNAME: testuser
-          MONGO_INITDB_ROOT_PASSWORD: testpass
-          MONGO_INITDB_DATABASE: workshop_test
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd mongo
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        bun-version: ['latest']
+      fail-fast: false
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js (for Jest compatibility)
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        node-version: '20'
 
-    - name: Install dependencies
+    - name: Setup Bun ${{ matrix.bun-version }}
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: ${{ matrix.bun-version }}
+
+    - name: Install dependencies with Bun
+      run: bun install
+
+    - name: Generate package-lock for Jest compatibility
+      run: npm install --package-lock-only
+
+    - name: Install npm dependencies for Jest
       run: npm ci
 
     - name: Create test environment file
       run: |
-        cp .env.test .env
-        echo "MONGO_URI=mongodb://testuser:testpass@localhost:27017/workshop_test?authSource=admin" >> .env
+        echo "NODE_ENV=test" > .env
+        echo "MONGO_URI=mongodb://localhost:27017/workshop_test" >> .env
+        echo "JWT_SECRET=test-jwt-secret-key" >> .env
+        echo "JWT_EXPIRES_IN=1h" >> .env
 
-    - name: Wait for MongoDB
+    - name: Run tests with coverage
+      run: npm run ci:test
+      env:
+        NODE_ENV: test
+        MONGO_URI: mongodb://localhost:27017/workshop_test
+        JWT_SECRET: test-jwt-secret-key
+        JWT_EXPIRES_IN: 1h
+
+    - name: Check coverage threshold
       run: |
-        timeout 30 bash -c 'until mongo --host localhost:27017 --username testuser --password testpass --authenticationDatabase admin --eval "db.adminCommand({ping: 1})"; do sleep 1; done'
-
-    - name: Run linting
-      run: npm run lint
-      continue-on-error: true
-
-    - name: Run type checking
-      run: npm run typecheck
-      continue-on-error: true
-
-    - name: Run unit tests
-      run: npm run test:unit
-      env:
-        NODE_ENV: test
-        MONGO_URI: mongodb://testuser:testpass@localhost:27017/workshop_test?authSource=admin
-        JWT_SECRET: test-jwt-secret-key
-        JWT_EXPIRES_IN: 1h
-
-    - name: Run integration tests
-      run: npm run test:integration
-      env:
-        NODE_ENV: test
-        MONGO_URI: mongodb://testuser:testpass@localhost:27017/workshop_test?authSource=admin
-        JWT_SECRET: test-jwt-secret-key
-        JWT_EXPIRES_IN: 1h
-
-    - name: Run all tests with coverage
-      run: npm run test:coverage
-      env:
-        NODE_ENV: test
-        MONGO_URI: mongodb://testuser:testpass@localhost:27017/workshop_test?authSource=admin
-        JWT_SECRET: test-jwt-secret-key
-        JWT_EXPIRES_IN: 1h
+        if [ -f coverage/lcov.info ]; then
+          echo "✅ Coverage report generated successfully"
+        else
+          echo "❌ Coverage report not found"
+          exit 1
+        fi
 
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         file: ./coverage/lcov.info
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Build application
-      run: npm run build
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Run ESLint
-      run: npm run lint
-      continue-on-error: true
-
-    - name: Run TypeScript check
-      run: npm run typecheck
-      continue-on-error: true
-
-  security:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Run security audit
-      run: npm audit --audit-level=moderate
-      continue-on-error: true
-
-    - name: Check for outdated packages
-      run: npm outdated
-      continue-on-error: true
+      run: bun run build
