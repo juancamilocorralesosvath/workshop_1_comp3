@@ -1,0 +1,2695 @@
+{
+	"info": {
+		"_postman_id": "e54ca920-785c-4bfa-946a-e67b40c56b9f",
+		"name": "Deployment tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38814846",
+		"_collection_link": "https://ados88-6941.postman.co/workspace/f8ac081a-6f8d-462a-9f33-e77ef5a89a3b/collection/38814846-e54ca920-785c-4bfa-946a-e67b40c56b9f?action=share&source=collection_link&creator=38814846"
+	},
+	"item": [
+		{
+			"name": "Deploy Auth-Users",
+			"item": [
+				{
+					"name": "Deploy-Auth-login-resgister",
+					"item": [
+						{
+							"name": "Deploy-admin-login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Admin login successful\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has access token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('accessToken');\r",
+											"    pm.globals.set('admin_token', jsonData.accessToken);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"admin@test.com\",\r\n  \"password\": \"admin123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/auth/login",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-register",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Registration successful\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has access token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('accessToken');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"testuser@test.com\",\r\n  \"password\": \"test123\",\r\n  \"full_name\": \"Test User\",\r\n  \"age\": 25,\r\n  \"phone\": \"+1234567890\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/auth/register",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-recepcionista-login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Recepcionista login successful\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has access token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('accessToken');\r",
+											"    pm.globals.set('recepcionista_token', jsonData.accessToken);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"recepcionista@test.com\",\r\n  \"password\": \"recep123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/auth/login",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-coach-login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Coach login successful\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has access token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('accessToken');\r",
+											"    pm.globals.set('coach_token', jsonData.accessToken);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"coach@test.com\",\r\n  \"password\": \"coach123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/auth/login",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-cliente-login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Cliente login successful\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has access token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('accessToken');\r",
+											"    pm.globals.set('cliente_token', jsonData.accessToken);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"cliente@test.com\",\r\n  \"password\": \"cliente123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/auth/login",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Deploy-Admin-Role",
+					"item": [
+						{
+							"name": "Deploy-set-IDs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"User IDs set successfully\", function () {\r",
+											"    // Set the known user IDs from the database initialization\r",
+											"    pm.globals.set('admin_user_id', 'admin_user_id');\r",
+											"    pm.globals.set('recepcionista_user_id', 'recepcionista_user_id');\r",
+											"    pm.globals.set('coach_user_id', 'coach_user_id');\r",
+											"    pm.globals.set('cliente_user_id', 'cliente_user_id');\r",
+											"    \r",
+											"    console.log('✅ User IDs configured:', {\r",
+											"        admin: pm.globals.get('admin_user_id'),\r",
+											"        recepcionista: pm.globals.get('recepcionista_user_id'),\r",
+											"        coach: pm.globals.get('coach_user_id'),\r",
+											"        cliente: pm.globals.get('cliente_user_id')\r",
+											"    });\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url_deploy}}/health",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"health"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-admin-create-user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"New test user created successfully\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has user data\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('id');\r",
+											"    pm.globals.set('new_test_user_id', jsonData.id);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"newuser-{{$timestamp}}@test.com\",\r\n  \"password\": \"newuser123\",\r\n  \"full_name\": \"New Test User\",\r\n  \"age\": 25,\r\n  \"phone\": \"+1234567899\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-admin-post-users",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Admin can create user\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has user data\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('id');\r",
+											"    pm.expect(jsonData).to.have.property('email');\r",
+											"    pm.globals.set('new_test_user_id', jsonData.id);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"admin-user-{{$timestamp}}@test.com\",\r\n  \"password\": \"newuser123\",\r\n  \"full_name\": \"Admin Created User\",\r\n  \"age\": 25,\r\n  \"phone\": \"+1234567894\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-admin-put-users-id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Admin can update user\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has updated user data\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('id');\r",
+											"    pm.expect(jsonData.full_name).to.eql('Updated User Name');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"full_name\": \"Updated User Name\",\r\n  \"age\": 26\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users/{{new_test_user_id}}",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users",
+										"{{new_test_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-users-get",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"New test user created successfully\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has user data\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('id');\r",
+											"    pm.globals.set('new_test_user_id', jsonData.id);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"newuser-{{$timestamp}}@test.com\",\r\n  \"password\": \"newuser123\",\r\n  \"full_name\": \"New Test User\",\r\n  \"age\": 25,\r\n  \"phone\": \"+1234567899\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-users-get-id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"New test user created successfully\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has user data\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.have.property('id');\r",
+											"    pm.globals.set('new_test_user_id', jsonData.id);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"newuser-{{$timestamp}}@test.com\",\r\n  \"password\": \"newuser123\",\r\n  \"full_name\": \"New Test User\",\r\n  \"age\": 25,\r\n  \"phone\": \"+1234567899\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users/{{cliente_user_id}}",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users",
+										"{{cliente_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy-admin-delete-users-id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Admin can delete user\", function () {",
+											"    pm.response.to.have.status(204);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/users/{{new_test_user_id}}",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users",
+										"{{new_test_user_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Deploy Recepcionista Role Tests",
+					"item": [
+						{
+							"name": "Recepcionista - GET /users (✅ Should succeed)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Recepcionista can get all users\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response is an array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an('array');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{recepcionista_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recepcionista - GET /users/:id (✅ Should succeed)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Recepcionista can get user by ID\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has user data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('id');",
+											"    pm.expect(jsonData).to.have.property('email');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{recepcionista_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/users/{{cliente_user_id}}",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users",
+										"{{cliente_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recepcionista - POST /users (✅ Should succeed)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Recepcionista can create user\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Response has user data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('id');",
+											"    pm.expect(jsonData).to.have.property('email');",
+											"    pm.globals.set('recep_created_user_id', jsonData.id);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{recepcionista_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"recep-user-{{$timestamp}}@test.com\",\n  \"password\": \"recepuser123\",\n  \"full_name\": \"Recep Created User\",\n  \"age\": 22,\n  \"phone\": \"+1234567895\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recepcionista - PUT /users/:id (❌ Should fail - 403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Recepcionista cannot update users\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response has forbidden message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Forbidden');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{recepcionista_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"full_name\": \"Should not update\",\n  \"age\": 99\n}"
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users/{{cliente_user_id}}",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users",
+										"{{cliente_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recepcionista - DELETE /users/:id (❌ Should fail - 403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Recepcionista cannot delete users\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response has forbidden message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Forbidden');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{recepcionista_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/users/{{cliente_user_id}}",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users",
+										"{{cliente_user_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Tests for recepcionista role - can view and create users but cannot modify or delete"
+				},
+				{
+					"name": "Deploy Coach Role Tests",
+					"item": [
+						{
+							"name": "Coach - GET /users (❌ Should fail - 403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Coach cannot get all users\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response has forbidden message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Forbidden');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{coach_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Coach - GET /users/:id (✅ Should succeed)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Coach can get user by ID\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has user data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('id');",
+											"    pm.expect(jsonData).to.have.property('email');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{coach_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/users/{{cliente_user_id}}",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users",
+										"{{cliente_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Coach - POST /users (❌ Should fail - 403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Coach cannot create users\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response has forbidden message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Forbidden');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{coach_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"coachuser@test.com\",\n  \"password\": \"coachuser123\",\n  \"full_name\": \"Coach Created User\",\n  \"age\": 22,\n  \"phone\": \"+1234567896\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Coach - PUT /users/:id (❌ Should fail - 403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Coach cannot update users\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response has forbidden message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Forbidden');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{coach_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"full_name\": \"Should not update\",\n  \"age\": 99\n}"
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users/{{cliente_user_id}}",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users",
+										"{{cliente_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Coach - GET /auth/profile (✅ Should succeed - Own profile)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Coach can get own profile\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has user data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('id');",
+											"    pm.expect(jsonData).to.have.property('email');",
+											"    pm.expect(jsonData.email).to.eql('coach@test.com');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{coach_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/auth/profile",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"auth",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Tests for coach role - can view individual users and own profile but cannot create, update, or delete users"
+				},
+				{
+					"name": "Deploy Cliente Role Tests",
+					"item": [
+						{
+							"name": "Cliente - GET /users (❌ Should fail - 403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Cliente cannot get all users\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response has forbidden message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Forbidden');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{cliente_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cliente - GET /users/:id (❌ Should fail - 403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Cliente cannot get other users by ID\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response has forbidden message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Forbidden');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{cliente_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/users/{{admin_user_id}}",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users",
+										"{{admin_user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cliente - POST /users (❌ Should fail - 403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Cliente cannot create users\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response has forbidden message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Forbidden');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{cliente_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"clienteuser@test.com\",\n  \"password\": \"clienteuser123\",\n  \"full_name\": \"Cliente Created User\",\n  \"age\": 22,\n  \"phone\": \"+1234567897\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cliente - GET /auth/profile (✅ Should succeed - Own profile)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Cliente can get own profile\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has user data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('id');",
+											"    pm.expect(jsonData).to.have.property('email');",
+											"    pm.expect(jsonData.email).to.eql('cliente@test.com');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{cliente_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/auth/profile",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"auth",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cliente - PUT /auth/profile (✅ Should succeed - Own profile)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Cliente can update own profile\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has updated user data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('id');",
+											"    pm.expect(jsonData).to.have.property('full_name');",
+											"    pm.expect(jsonData.full_name).to.eql('Cliente Updated Name');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{cliente_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"full_name\": \"Cliente Updated Name\",\n  \"age\": 36\n}"
+								},
+								"url": {
+									"raw": "{{base_url_deploy}}/auth/profile",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"auth",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Tests for cliente role - can only access and modify own profile"
+				},
+				{
+					"name": "Deploy Authentication Edge Cases",
+					"item": [
+						{
+							"name": "No Token - GET /users (❌ Should fail - 401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"No token returns 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"Response has unauthorized message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Unauthorized');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid Token - GET /users (❌ Should fail - 403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Invalid token returns 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response has invalid token message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('message');",
+											"    pm.expect(jsonData.message).to.include('Invalid');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer invalid_token_12345"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_deploy}}/users",
+									"host": [
+										"{{base_url_deploy}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Tests for authentication edge cases"
+				}
+			]
+		},
+		{
+			"name": "Deploy Membership",
+			"item": [
+				{
+					"name": "Login Admin Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Access token is received and saved to environment\", function () {",
+									"    // Parsea la respuesta JSON",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    // Verifica que el accessToken existe en la respuesta",
+									"    pm.expect(responseData.accessToken).to.exist;",
+									"    pm.expect(responseData.accessToken).to.be.a('string');",
+									"",
+									"    // Guarda el accessToken en una variable de entorno",
+									"    pm.environment.set(\"accessToken\", responseData.accessToken);",
+									"    ",
+									"    console.log(\"Access Token guardado exitosamente!\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url_deploy}}/auth/login",
+							"host": [
+								"{{base_url_deploy}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create new membership",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response body contains a valid membership object\", function () {",
+									"    // 1. Parsear la respuesta JSON",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    // 2. Verificar que la respuesta es un objeto y tiene una propiedad 'id'",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.id).to.exist; ",
+									"    pm.expect(responseData.id).to.not.be.empty;",
+									"",
+									"    // 3. Si todo está bien, guardar el id en la variable de entorno",
+									"    let createdMembershipId = responseData.id;",
+									"    pm.environment.set(\"createdMembershipId\", createdMembershipId);",
+									"    ",
+									"    ",
+									"    console.log(\"Se guardó el ID de la membresía:\", createdMembershipId);",
+									"    console.log(\"prueba:\")",
+									"    pm.environment.set(\"test_variable\", \"hola mundo\");",
+									"});",
+									"",
+									"pm.test(\"Status code is 409 Conflict for duplicate name\", function () {",
+									"    pm.response.to.have.status(409);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Bitcoin 6\",\n    \"cost\": 50,\n    \"max_classes_assistance\": 30,\n    \"max_gym_assistance\": 30,\n    \"duration_months\": 12\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllMemberships",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array of memberships\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMembershipById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains the correct membership\", function () {",
+									"    const responseData = pm.response.json();",
+									"    const expectedId = pm.environment.get(\"createdMembershipId\");",
+									"    pm.expect(responseData.id).to.eql(expectedId);",
+									"    pm.expect(responseData.name).to.eql(\"Membresía Oro Élite\"); // O el nombre que esperas",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/{{createdMembershipId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{createdMembershipId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMembership",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Membership was updated correctly\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.name).to.eql(\"Membresía Oro Élite (Actualizada)\");",
+									"    pm.expect(responseData.cost).to.eql(55);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"nombre original\",\n    \"cost\": 101\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{createdMembershipId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{createdMembershipId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "toggleMembershipStatus",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Membership status was toggled to false\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.status).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/{{createdMembershipId}}/toggle-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{createdMembershipId}}",
+								"toggle-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMembership",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204 No Content\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/{{createdMembershipId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{createdMembershipId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMembership Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/non-existent-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"non-existent-id"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deploy Attendance",
+			"item": [
+				{
+					"name": "Login Admin Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Access token is received and saved to environment\", function () {",
+									"    // Parsea la respuesta JSON",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    // Verifica que el accessToken existe en la respuesta",
+									"    pm.expect(responseData.accessToken).to.exist;",
+									"    pm.expect(responseData.accessToken).to.be.a('string');",
+									"",
+									"    // Guarda el accessToken en una variable de entorno",
+									"    pm.environment.set(\"accessToken\", responseData.accessToken);",
+									"    ",
+									"    console.log(\"Access Token guardado exitosamente!\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "https://workshop-1-comp3.onrender.com/auth/login",
+							"protocol": "https",
+							"host": [
+								"workshop-1-comp3",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Base Users (All get 'cliente' role initially) Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Registration successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has access token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('accessToken');",
+									"",
+									"    pm.environment.set(\"testUserId\", jsonData.user.id);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"testuser11@test.com\",\n  \"password\": \"test123\",\n  \"full_name\": \"Test User\",\n  \"age\": 25,\n  \"phone\": \"+1234567890\"\n}"
+						},
+						"url": {
+							"raw": "https://workshop-1-comp3.onrender.com/auth/register",
+							"protocol": "https",
+							"host": [
+								"workshop-1-comp3",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/status/{{testUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"status",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "history Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Subscription history exists and is initially empty\", () => {",
+									"    ",
+									"    const responseData = pm.response.json();",
+									"",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.user_id.id).to.eql(pm.environment.get(\"testUserId\"));",
+									"",
+									"",
+									"    pm.expect(responseData.memberships).to.be.an('array').with.lengthOf(0);",
+									"",
+									"    ",
+									"    pm.environment.set(\"subscriptionId\", responseData.id);",
+									"    ",
+									"    console.log(\"Historial de suscripción encontrado. ID guardado:\", responseData.id);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/subscriptions/users/{{testUserId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"subscriptions",
+								"users",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add membership Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Membership was successfully added to the subscription history\", () => {",
+									"    // Parsear la respuesta JSON",
+									"    const responseData = pm.response.json();",
+									"",
+									"    // Verificar que la respuesta es un objeto y que el array 'memberships' ahora tiene elementos",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.memberships).to.be.an('array').and.not.be.empty;",
+									"",
+									"",
+									"    console.log(`Membresía añadida al historial del usuario.`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"membershipId\": \"membership_HRpsVs-20K\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://workshop-1-comp3.onrender.com/subscriptions/{{subscriptionId}}/add-membership",
+							"protocol": "https",
+							"host": [
+								"workshop-1-comp3",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"add-membership"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", () => pm.response.to.have.status(201));",
+									"",
+									"pm.test(\"Response is a valid attendance record\", () => {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.user_id).to.eql(pm.environment.get(\"testUserId\"));",
+									"    pm.expect(responseData.is_active).to.be.true;",
+									"    pm.expect(responseData.exit_dateTime).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"gym\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/checkin/{{testUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"checkin",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "status asistency",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"User is now inside and available attendances are reduced\", () => {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.isInside).to.be.true;",
+									"    pm.expect(responseData.currentAttendance).to.exist;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/status/{{testUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"status",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "see all active users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"The list of active users includes our test user\", () => {",
+									"    const responseData = pm.response.json();",
+									"    const testUserId = pm.environment.get(\"testUserId\");",
+									"    const userIsActive = responseData.some(att => att.user_id.id === testUserId);",
+									"    pm.expect(userIsActive).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/active",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"Attendance record is updated for check-out\", () => {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.is_active).to.be.false;",
+									"    pm.expect(responseData.exit_dateTime).to.exist;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/checkout/{{testUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"checkout",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "attendances history by user id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"History contains at least one record\", () => {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.be.an('array').and.not.be.empty;",
+									"    pm.expect(responseData[0].user_id).to.eql(pm.environment.get(\"testUserId\"));",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/history/{{testUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"history",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user stats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"Stats response has the correct structure\", () => {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.totalGymAttendances).to.be.at.least(1);",
+									"    pm.expect(responseData.totalClassAttendances).to.be.a('number');",
+									"    pm.expect(responseData.monthlyStats).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/{{testUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check in - already inside",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409 Conflict\", () => {",
+									"    pm.response.to.have.status(409);",
+									"});",
+									"pm.test(\"Response has correct error message\", () => {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.message).to.eql(\"El usuario ya está dentro del gym.\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"gym\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/checkin/{{testUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"checkin",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkout - already outside",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409 Conflict\", () => {",
+									"    pm.response.to.have.status(409);",
+									"});",
+									"pm.test(\"Response has correct error message\", () => {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.message).to.eql(\"El usuario no está actualmente dentro del gym.\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/checkout/{{testUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"checkout",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deploy Subscription",
+			"item": [
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Access token is received and saved to environment\", function () {",
+									"    // Parsea la respuesta JSON",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    // Verifica que el accessToken existe en la respuesta",
+									"    pm.expect(responseData.accessToken).to.exist;",
+									"    pm.expect(responseData.accessToken).to.be.a('string');",
+									"",
+									"    // Guarda el accessToken en una variable de entorno",
+									"    pm.environment.set(\"accessToken\", responseData.accessToken);",
+									"    ",
+									"    console.log(\"Access Token guardado exitosamente!\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "https://workshop-1-comp3.onrender.com/auth/login",
+							"protocol": "https",
+							"host": [
+								"workshop-1-comp3",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "history",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Subscription history exists and is initially empty\", () => {",
+									"    ",
+									"    const responseData = pm.response.json();",
+									"",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.user_id.id).to.eql(pm.environment.get(\"testUserId\"));",
+									"",
+									"",
+									"    pm.expect(responseData.memberships).to.be.an('array').with.lengthOf(0);",
+									"",
+									"    ",
+									"    pm.environment.set(\"subscriptionId\", responseData.id);",
+									"    ",
+									"    console.log(\"Historial de suscripción encontrado. ID guardado:\", responseData.id);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{testUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url_deploy",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": ""
+		}
+	]
+}
