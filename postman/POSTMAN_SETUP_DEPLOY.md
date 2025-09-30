@@ -18,10 +18,22 @@ Descarga e instala [Postman](vscode-file://vscode-app/c:/Users/USUARIO/AppData/
 Algunas colecciones usan variables como `base_url`, `base_url_deploy` o `baseUrl`.  
 Crea una variable de entorno en Postman con el valor correspondiente, por ejemplo:
 
+Auth-Users
 - `base_url_deploy` = `https://workshop-1-comp3.onrender.com`
+Membership-Subscriptions-Attendance
+- `baseUrl` = `https://workshop-1-comp3.onrender.com`
 
 ### 4. Ejecuta las pruebas
 
 1. Selecciona la colección importada en el panel izquierdo.
 2. Haz clic en el botón **"Run"** o selecciona las peticiones que deseas probar.
 3. Observa los resultados en la pestaña de "Tests" de cada petición.
+
+Variables de entorno:
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)
+
+![alt text](image-3.png)

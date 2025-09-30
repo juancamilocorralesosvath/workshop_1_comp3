@@ -2053,11 +2053,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/subscriptions/users/{{testUserId}}",
+							"raw": "https://workshop-1-comp3.onrender.com/subscriptions/users/{{testUserId}}",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"workshop-1-comp3",
+								"onrender",
+								"com"
 							],
-							"port": "3000",
 							"path": [
 								"subscriptions",
 								"users",
@@ -2111,7 +2113,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"membershipId\": \"membership_HRpsVs-20K\"\n}",
+							"raw": "{\n    \"membershipId\": \"membership_9Qx_4wzEYH\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2537,7 +2539,7 @@
 			"name": "Deploy Subscription",
 			"item": [
 				{
-					"name": "Login Admin",
+					"name": "1. Login Admin",
 					"event": [
 						{
 							"listen": "test",
@@ -2548,22 +2550,15 @@
 									"});",
 									"",
 									"pm.test(\"Access token is received and saved to environment\", function () {",
-									"    // Parsea la respuesta JSON",
 									"    const responseData = pm.response.json();",
-									"    ",
-									"    // Verifica que el accessToken existe en la respuesta",
 									"    pm.expect(responseData.accessToken).to.exist;",
 									"    pm.expect(responseData.accessToken).to.be.a('string');",
-									"",
-									"    // Guarda el accessToken en una variable de entorno",
 									"    pm.environment.set(\"accessToken\", responseData.accessToken);",
-									"    ",
 									"    console.log(\"Access Token guardado exitosamente!\");",
 									"});"
 								],
 								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
+								"packages": {}
 							}
 						}
 					],
@@ -2577,16 +2572,20 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\"\n}"
+							"raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
-							"raw": "https://workshop-1-comp3.onrender.com/auth/login",
-							"protocol": "https",
+							"raw": "http://localhost:3000/auth/login",
+							"protocol": "http",
 							"host": [
-								"workshop-1-comp3",
-								"onrender",
-								"com"
+								"localhost"
 							],
+							"port": "3000",
 							"path": [
 								"auth",
 								"login"
@@ -2596,31 +2595,146 @@
 					"response": []
 				},
 				{
-					"name": "history",
+					"name": "2. Register Test User",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200 OK\", () => {",
+									"pm.test(\"Registration successful\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Subscription history exists and is initially empty\", () => {",
+									"pm.test(\"Response has access token and user ID\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('accessToken');",
+									"    pm.expect(jsonData.user).to.have.property('id');",
 									"    ",
-									"    const responseData = pm.response.json();",
+									"    pm.environment.set(\"testUserId\", jsonData.user.id);",
+									"    console.log(\"Test User ID guardado:\", jsonData.user.id);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"usertest@test.com\",\n  \"password\": \"test123\",\n  \"full_name\": \"Test User Subscription\",\n  \"age\": 25,\n  \"phone\": \"+1234567890\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Create Test Membership",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Membership created successfully\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
 									"",
+									"pm.test(\"Membership ID saved to environment\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.environment.set(\"membershipId\", jsonData.id);",
+									"    console.log(\"Membership ID guardado:\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Premium Membership\",\n  \"cost\": 50000,\n  \"max_classes_assistance\": 8,\n  \"max_gym_assistance\": 20,\n  \"duration_months\": 1,\n  \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/memberships",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"memberships"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Create Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Subscription created successfully\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Subscription structure is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('user_id');",
+									"    pm.expect(jsonData).to.have.property('memberships');",
+									"    pm.expect(jsonData.memberships).to.be.an('array').that.is.empty;",
 									"    ",
-									"    pm.expect(responseData).to.be.an('object');",
-									"    pm.expect(responseData.user_id.id).to.eql(pm.environment.get(\"testUserId\"));",
-									"",
-									"",
-									"    pm.expect(responseData.memberships).to.be.an('array').with.lengthOf(0);",
-									"",
-									"    ",
-									"    pm.environment.set(\"subscriptionId\", responseData.id);",
-									"    ",
-									"    console.log(\"Historial de suscripción encontrado. ID guardado:\", responseData.id);",
+									"    pm.environment.set(\"subscriptionId\", jsonData.id);",
+									"    console.log(\"Subscription ID guardado:\", jsonData.id);",
 									"});"
 								],
 								"type": "text/javascript",
@@ -2640,14 +2754,211 @@
 								}
 							]
 						},
-						"method": "GET",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"{{testUserId}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{baseUrl}}/users/{{testUserId}}",
+							"raw": "{{baseUrl}}/subscriptions",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"subscriptions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Get Subscription (Empty)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Subscription found and is initially empty\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.user_id.id).to.eql(pm.environment.get(\"testUserId\"));",
+									"    pm.expect(responseData.memberships).to.be.an('array').with.lengthOf(0);",
+									"    ",
+									"    console.log(\"Subscription encontrada. Memberships iniciales:\", responseData.memberships.length);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/subscriptions/users/{{testUserId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"subscriptions",
+								"users",
+								"{{testUserId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Add Membership to Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Membership added successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Subscription now contains the membership\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('memberships');",
+									"    pm.expect(jsonData.memberships).to.be.an('array').with.lengthOf(1);",
+									"    ",
+									"    const membership = jsonData.memberships[0];",
+									"    pm.expect(membership).to.have.property('membership_id');",
+									"    pm.expect(membership).to.have.property('name');",
+									"    pm.expect(membership).to.have.property('cost');",
+									"    pm.expect(membership).to.have.property('purchase_date');",
+									"    ",
+									"    console.log(\"Membership agregada:\", membership.name);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"membershipId\": \"{{membershipId}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/subscriptions/{{subscriptionId}}/add-membership",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"add-membership"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Verify Subscription with Membership",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Subscription contains membership history\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.memberships).to.be.an('array').with.lengthOf(1);",
+									"    ",
+									"    const membership = responseData.memberships[0];",
+									"    pm.expect(membership.membership_id).to.eql(pm.environment.get(\"membershipId\"));",
+									"    pm.expect(membership.name).to.eql(\"Test Premium Membership\");",
+									"    pm.expect(membership.cost).to.eql(50000);",
+									"    ",
+									"    console.log(\"Historial verificado. Memberships:\", responseData.memberships.length);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/subscriptions/users/{{testUserId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"subscriptions",
 								"users",
 								"{{testUserId}}"
 							]
