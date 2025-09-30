@@ -277,7 +277,7 @@ test: agregar tests
 
 ---
 ### **Link al despliegue del proyecto**
-https://workshop-1-comp3.onrender.com/
+https://workshop-1-comp3.onrender.com/health
 
 
 
